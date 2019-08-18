@@ -26,6 +26,7 @@ const Bar = styled.div`
   display: flex;
   align-items: center;
   height: 64px;
+  max-height: 64px;
   margin-bottom: 24px;
 `
 

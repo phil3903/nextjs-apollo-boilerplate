@@ -2,6 +2,7 @@ import React from 'react'
 import App, { Container } from 'next/app'
 import Head from 'next/head'
 import { PageTransition } from 'next-page-transitions'
+import Navbar from '../components/Navbar'
 import withApolloClient from '../lib/with-apollo-client'
 import { ApolloProvider } from '@apollo/react-hooks'
 import '../styles/reset.scss'
@@ -96,9 +97,15 @@ class _App extends App<IProps> {
         </Head>
 
         <ApolloProvider client={apolloClient}>
-        <PageTransition timeout={300} classNames="page-transition">
-          <Component {...pageProps} key={router.route} />
-        </PageTransition>
+          <div className="container-fluid fill">
+            <Navbar 
+              title={'Todos'}
+              stack={['Next.js', 'Apollo']}
+            />
+          <PageTransition timeout={300} classNames="page-transition">
+            <Component {...pageProps} key={router.route} />
+          </PageTransition>
+        </div>
         </ApolloProvider>
       </Container>
     )

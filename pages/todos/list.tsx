@@ -1,7 +1,6 @@
 
 import React from 'react'
 import { format } from 'date-fns'
-import Navbar from '../../components/Navbar'
 import { UserStats } from '../../components/Users'
 import { Todo, TodoList } from '../../components/Todos'
 import { Form, Input, SubmitButton } from '../../components/FormElements'
@@ -16,11 +15,7 @@ const Todos = () => {
   }
 
   return(
-    <div id="todos-page" className="container-fluid fill">
-      <Navbar 
-        title={'Todos'}
-        stack={['Next.js', 'Apollo']}
-      />
+    <>
       <div className="row">
         <div className="col-sm-2">
           <UserStats />
@@ -49,7 +44,7 @@ const Todos = () => {
         </div>
         <div className="col-lg-3" />
       </div>
-    </div>
+    </>
   )
 }
 
