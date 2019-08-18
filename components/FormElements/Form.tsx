@@ -3,19 +3,18 @@ import styled from '@emotion/styled'
 // const Filter = require('bad-words')
 // const filter = new Filter()
 
-export interface IFormData{
-  name: string,
+export interface IFormData {
+  name: string
   value: string | number | boolean | null | undefined
 }
 
 interface IFormProps {
-  children: any,
-  title: string,
+  children: any
+  title: string
   onSubmit: (data: IFormData[]) => void
 }
 
-const Form = ({title, children, onSubmit}: IFormProps) => {
-
+const Form = ({ title, children, onSubmit }: IFormProps) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const data = children
@@ -24,22 +23,17 @@ const Form = ({title, children, onSubmit}: IFormProps) => {
         const data = new FormData(e.target as HTMLFormElement)
         return {
           name: c.props.name,
-          value: data.get(c.props.name)
+          value: data.get(c.props.name),
         }
       })
-    
 
     onSubmit(data)
   }
 
   return (
     <Container>
-      <Title>
-        {title}
-      </Title>
-      <StyledForm onSubmit={handleSubmit}>
-        {children}
-      </StyledForm>
+      <Title>{title}</Title>
+      <StyledForm onSubmit={handleSubmit}>{children}</StyledForm>
     </Container>
   )
 }
@@ -53,9 +47,7 @@ const Title = styled.h1`
   color: #fcfcfc;
 `
 
-const Container = styled.div`
-
-`
+const Container = styled.div``
 
 const StyledForm = styled.form`
   display: flex;

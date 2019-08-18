@@ -30,16 +30,18 @@ const Bar = styled.div`
 `
 
 const Title = styled.span`
+  font-family: Poppins SemiBold;
   color: #F3E9D2;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
   margin: 0 8px 0 8px;
 `
 
 const StackText = styled.span`
+  font-family: Poppins Medium;
   color: #F3E9D2;
-  font-size: 12px;
-  font-weight: 200;
+  font-size: 16px;
+  font-weight: 500;
 `
 
 /* Clsoe  */

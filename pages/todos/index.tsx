@@ -1,16 +1,21 @@
 
+
 import React from 'react'
-import Navbar from '../components/Navbar'
+import { useRouter } from 'next/router'
+import Navbar from '../../components/Navbar'
 //import styled from '@emotion/styled'
-import { UserList, User } from '../components/Users'
-import { Form, Input, SubmitButton } from '../components/FormElements'
-import { Instructions } from '../components/Instructions'
-import { IFormData } from 'components/FormElements/Form';
+import { UserList, User } from '../../components/Users'
+import { Form, Input, SubmitButton } from '../../components/FormElements'
+import { Instructions } from '../../components/Instructions'
+import { IFormData } from '../../components/FormElements/Form'
 
 const Todos = () => {
 
+  const router = useRouter()
+
   const handleLogin = (data: IFormData[]) => {
    console.log(data)
+   router.push('/todos/list')
   }
 
   return(

@@ -30,14 +30,14 @@ const Card = styled.button`
 
 `
 
-const Circle = styled.div`
+export const Circle = styled.div`
   margin-right: 24px;
   background: #fcfcfc;
   height: 32px;
   width: 32px;
   border-radius: 32px;
 `
-const Text = styled.p`
+export const Text = styled.p`
   font-family: 'Poppins Light';
   font-size: 24px;
   font-weight: 300;
