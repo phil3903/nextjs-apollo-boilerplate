@@ -95,7 +95,6 @@ class _App extends App<IProps> {
             content="/static/favicon/ms-icon-144.png"
           />
         </Head>
-
         <ApolloProvider client={apolloClient}>
           <div className="container-fluid fill">
             <Navbar 

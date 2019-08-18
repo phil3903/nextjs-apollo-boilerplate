@@ -36,15 +36,6 @@ async function main() {
     const apolloServer = new ApolloServer({
       typeDefs: schema,
       resolvers,
-      context: ({ req }) => {
-        const token = String(req.headers.token)
-        if(!token) throw new AuthenticationError('you are not logged in')
-
-        const user = authorizeToken(token)
-        if(!user) throw new AuthenticationError('you are not logged in')
-
-        return {user}
-      },
     })
 
     apolloServer.applyMiddleware({ app, path: '/graphql' })
@@ -56,3 +47,17 @@ async function main() {
 }
 
 main()
+
+
+const handleJWT = ({ req }: any) => {
+  const token = String(req.headers.token)
+  if(!token) throw new AuthenticationError('you are not logged in')
+
+  const user = authorizeToken(token)
+  if(!user) throw new AuthenticationError('you are not logged in')
+
+  return {user}
+}
+console.log(handleJWT)
+
+
