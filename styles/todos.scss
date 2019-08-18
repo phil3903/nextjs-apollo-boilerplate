@@ -12,3 +12,18 @@ div#__next > div {
   background: linear-gradient(57.99deg, #114B5F 0%, #1A936F 100%);
   font-family: 'Poppins'
 }
+
+.page-transition-enter {
+  opacity: 0;
+}
+.page-transition-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.page-transition-exit {
+  opacity: 1;
+}
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}

@@ -1,6 +1,7 @@
 import React from 'react'
 import App, { Container } from 'next/app'
 import Head from 'next/head'
+import { PageTransition } from 'next-page-transitions'
 import withApolloClient from '../lib/with-apollo-client'
 import { ApolloProvider } from '@apollo/react-hooks'
 import '../styles/reset.scss'
@@ -13,7 +14,7 @@ interface IProps {
 
 class _App extends App<IProps> {
   render() {
-    const { Component, pageProps, apolloClient } = this.props
+    const { Component, pageProps, apolloClient, router } = this.props
 
     return (
       <Container>
@@ -95,7 +96,9 @@ class _App extends App<IProps> {
         </Head>
 
         <ApolloProvider client={apolloClient}>
-          <Component {...pageProps} />
+        <PageTransition timeout={300} classNames="page-transition">
+          <Component {...pageProps} key={router.route} />
+        </PageTransition>
         </ApolloProvider>
       </Container>
     )
