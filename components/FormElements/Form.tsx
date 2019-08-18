@@ -19,13 +19,10 @@ const Form = ({ title, children, onSubmit }: IFormProps) => {
     e.preventDefault()
     const data = children
       .filter((c: any) => c.props.formData)
-      .map((c: any) => {
+      .reduce((obj: object, c: any) => {
         const data = new FormData(e.target as HTMLFormElement)
-        return {
-          name: c.props.name,
-          value: data.get(c.props.name),
-        }
-      })
+        return {...obj, [c.props.name]:data.get(c.props.name)}
+      }, {})
 
     onSubmit(data)
   }

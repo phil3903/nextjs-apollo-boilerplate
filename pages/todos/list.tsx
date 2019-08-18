@@ -48,7 +48,8 @@ const Todos = () => {
   )
 }
 
-
-
+Todos.getInitialProps = async (_context: any) => {
+  return {}
+}
 
 export default Todos

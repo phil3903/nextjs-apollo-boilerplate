@@ -7,8 +7,9 @@ import Todo from './todo.model'
 
 export interface IUser extends IBase {
   name: string
-  password: string
+  password?: string
   photo: string
+  lastLoginDate: Date
   todos?: ITodo[]
 }
 
@@ -25,11 +26,14 @@ export default class User extends BaseModel {
   @Column({ unique: true })
   name: string
 
-  @Column()
+  @Column({select: false})
   password: string
 
-  @Column()
+  @Column({default: 'default'})
   photo: string
+
+  @Column()
+  lastLoginDate: Date
 
   @OneToMany(() => Todo, todo => todo.user)
   todos: Promise<Todo[]>

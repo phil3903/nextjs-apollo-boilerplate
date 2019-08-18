@@ -1,12 +1,17 @@
 import React from 'react'
 import styled from '@emotion/styled'
 
-const User = () => {
+interface IUserProps {
+  name?: string,
+  photo?: string
+}
+
+const User = ({name}: IUserProps) => {
   return (
     <Card>
       <Circle />
       <Text>
-        Username
+        {name}
       </Text>
     </Card>
   )

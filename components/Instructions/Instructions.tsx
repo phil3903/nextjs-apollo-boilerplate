@@ -7,8 +7,8 @@ const Instructions = () => {
       <Title>Instructions:</Title>
       <Ul>
         <Li>
-          Make up any fake Name and Password to create a user. I’m using bcrypt in
-          the backend, but don’t use your real password please!
+          Make up any fake Name and Password to create a user. I’m using bcrypt and redacting passwords in
+          the backend, but don’t use your real password please! I'm exposing the list of Users to any unauthenticated visitor.
         </Li>
         <Li>
           Whoever you logged in as last is stored in a JWT for 1 hour, so if you

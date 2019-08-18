@@ -1,11 +1,13 @@
 import React from 'react'
-import { useRouter } from 'next/router'
+//import { useRouter } from 'next/router'
+import { useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 //import styled from '@emotion/styled'
 import { UserList, User } from '../components/Users'
 import { Form, Input, SubmitButton } from '../components/FormElements'
 import { Instructions } from '../components/Instructions'
 import { IFormData } from '../components/FormElements/Form'
+import { IUser } from '../models/user.model'
 
 export const GET_USERS = gql`
   query GetUsers($page: Int, $limit: Int) {
@@ -25,12 +27,33 @@ export const GET_USERS = gql`
   }
 `
 
-const Index = () => {
-  const router = useRouter()
+const LOGIN_OR_CREATE = gql`
+  mutation LoginOrCreate(
+    $name: String!
+    $password: String!
+    $photo: String
+  ) {
+    loginOrCreate(
+      name: $name
+      password: $password
+      photo: $photo
+    ) {
+      id
+      name
+    }
+  }
+`
 
-  const handleLogin = (data: IFormData[]) => {
-    console.log(data)
-    router.push('/todos/list')
+const Index = (props:any) => {
+  //const router = useRouter()
+  const [loginOrCreate] = useMutation(LOGIN_OR_CREATE)
+
+  const handleLogin = (variables: IFormData[]) => {
+    console.log(variables)
+    loginOrCreate({
+      variables
+    })
+    //router.push('/todos/list')
   }
 
   return (
@@ -42,8 +65,12 @@ const Index = () => {
         <div className="col-sm-1" />
         <div className="col-sm-3">
           <UserList>
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(user => (
-              <User key={user} />
+            {props.users.payload.map((user: IUser) => (
+              <User 
+                key={user.id}
+                name={user.name}
+                photo={user.photo} 
+              />
             ))}
           </UserList>
         </div>
@@ -61,11 +88,8 @@ const Index = () => {
 }
 
 Index.getInitialProps = async (context:any) => {
-
   const { data } = await context.apolloClient.query({ query: GET_USERS })
-  console.log(data)
-  
-  return {}
+  return data
 }
 
 export default Index

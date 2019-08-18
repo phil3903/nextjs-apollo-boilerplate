@@ -5,26 +5,8 @@ import User, { IUser } from '../models/user.model'
 import { IBaseQuery, IContext } from 'types'
 import { createToken } from '../server/auth'
 
+
 /* Queries */
-
-const login = async (
-  _parent: any,
-  { name, password }: { name: string; password: string },
-) => {
-  const userRepo = getRepository(User)
-  const user = await userRepo.findOne({
-    where: { name, password },
-  })
-
-  if (!user) throw new ApolloError('User Not Found')
-
-  const isValid = bcrypt.compare(password, user.password)
-  if (!isValid) {
-    throw new ApolloError('Wrong Password')
-  }
-
-  return createToken
-}
 
 const users = async (_parent: any, { limit = 10, page = 1 }: IBaseQuery) => {
   const userRepo = getRepository(User)
@@ -37,7 +19,7 @@ const users = async (_parent: any, { limit = 10, page = 1 }: IBaseQuery) => {
   const count = users.length
 
   return {
-    payload: users.map(user => ({ ...user, id: null })),
+    payload: users,
     totalCount,
     count,
     page,
@@ -47,16 +29,50 @@ const users = async (_parent: any, { limit = 10, page = 1 }: IBaseQuery) => {
 
 /* Mutations */
 
-const createUser = async (_parent: any, { name, password, photo }: IUser) => {
-  console.log(_parent)
-  const userRepo = getRepository(User)
-  const user = await userRepo.create()
-  user.name = name
-  user.photo = photo
-  user.password = await bcrypt.hash(password, 10)
-  const newUser = await userRepo.save(user)
-  return createToken(newUser)
+const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => {
+  try{
+    if(!password) {
+      return new ApolloError('No Password Provided')
+    }
+
+    const userRepo = getRepository(User)
+    const user = await userRepo
+      .createQueryBuilder('user')
+      .where('user.name = :name', {name})
+      .addSelect('user.password')
+      .getOne()
+
+    console.log(user)
+
+    // If we find a user then validate
+    if(user){
+      const isValid = await bcrypt.compare(password, user.password)
+      console.log(isValid)
+      if (!isValid) {
+        return new ApolloError('Wrong Password')
+      }
+      user.lastLoginDate = new Date()
+      await userRepo.save(user)
+      console.log(createToken(user))
+      return user //createToken(user)
+    }
+
+
+    // Otherwise return our new user
+    const newUser = await userRepo.create()
+    newUser.name = name
+    newUser.photo = photo
+    newUser.lastLoginDate = new Date()
+    newUser.password = await bcrypt.hash(password, 10)
+    console.log(newUser)
+    const savedUser = await userRepo.save(newUser)
+    console.log(savedUser)
+    return savedUser //createToken(savedUser)
+  } catch (err) {
+    return new ApolloError(err)
+  }
 }
+
 
 const updateUser = async (
   _parent: any,
@@ -91,11 +107,10 @@ const removeUser = async (_parent: any, _variables: any, context: IContext) => {
 
 const UserResolver = {
   Query: {
-    login,
     users,
   },
   Mutation: {
-    createUser,
+    loginOrCreate,
     updateUser,
     removeUser,
   },
