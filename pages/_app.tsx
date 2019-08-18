@@ -5,6 +5,7 @@ import withApolloClient from '../lib/with-apollo-client'
 import { ApolloProvider } from '@apollo/react-hooks'
 import '../styles/reset.scss'
 import '../styles/bootstrap-grid.scss'
+import '../styles/todos.scss'
 
 interface IProps {
   apolloClient: any //fix this

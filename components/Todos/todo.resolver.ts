@@ -13,7 +13,11 @@ interface ActiveTodosResult {
 
 const todoResolver = {
   Mutation:{
-    toggleActiveTodos: (_:any, {id}: {id: string}, {cache}: {cache: InMemoryCache}) =>{
+    toggleActiveTodos: (
+      _:any, 
+      {id}: {id: string}, 
+      {cache}: {cache: InMemoryCache}
+    ) =>{
     
       const activeTodos = cache.readQuery<ActiveTodosResult>({query: GET_ACTIVE_TODOS})!.activeTodos
       const index = activeTodos.indexOf(id)
