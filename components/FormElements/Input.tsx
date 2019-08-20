@@ -15,9 +15,9 @@ const Input = ({placeholder, name, type}: InputProps) => {
     setText(e.target.value)
   }
 
-  const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e)
-  }
+  // const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   console.log(e)
+  // }
   
   return (
     <StyledInput 
@@ -26,7 +26,6 @@ const Input = ({placeholder, name, type}: InputProps) => {
       type={type}
       value={text}
       onChange={ handleOnChange }
-      onBlur={ handleBlur }
     />
   )
 }
@@ -35,8 +34,6 @@ Input.defaultProps = {
   formData: true,
   type: 'text'
 }
-
-
 
 const StyledInput = styled.input`
   font-family: 'Poppins Light';
@@ -83,7 +80,5 @@ const StyledInput = styled.input`
     
   }
 `
-
-
 
 export default Input

@@ -2,24 +2,26 @@ import React from 'react'
 import styled from '@emotion/styled'
 import {Circle, Text as Username} from './User'
 
-const UserStats = () => {
+interface IUserStatsProps {
+  name: string
+  createdDate: Date
+  todoCount: number
+}
+
+const UserStats = ({name, createdDate, todoCount}: IUserStatsProps) => {
   return(
     <div>
       <Heading>
         <Circle />
-        <Username>Username</Username>
+        <Username>{name}</Username>
       </Heading>
       <Row>
         <LeftText>User Since:</LeftText>
-        <RightText>Aug 12, 1987</RightText>
-      </Row>
-      <Row>
-        <LeftText>Last Login:</LeftText>
-        <RightText>Aug 12, 2019</RightText>
+        <RightText>{createdDate}</RightText>
       </Row>
       <Row>
         <LeftText>Todos:</LeftText>
-        <RightText>14</RightText>
+        <RightText>{todoCount}</RightText>
       </Row>
     </div>
   )

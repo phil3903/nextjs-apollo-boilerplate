@@ -6,6 +6,7 @@ import 'reflect-metadata'
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { createConnection } from 'typeorm'
+import cookie from 'cookie'
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions'
 import nextapp from './nextapp'
 
@@ -36,9 +37,8 @@ async function main() {
       typeDefs: schema,
       resolvers,
       context: ({req}) => {
-        return {
-          authorization: req.headers.authorization
-        }
+        const {authorization} = cookie.parse(req.headers.cookie || '')
+        return {authorization}
       }
     })
 

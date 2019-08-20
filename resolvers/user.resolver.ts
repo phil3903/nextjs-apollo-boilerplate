@@ -7,22 +7,43 @@ import { createToken, authorizeToken } from '../lib/auth'
 
 /* Queries */
 
+const user = async (_parent: any, _variables: any, {authorization}: IContext) => {
+  try {
+    if(!authorization) {
+      return new ApolloError('You are not authorized')
+    }
+
+    const {id} = await authorizeToken(authorization)
+    const userRepo = getRepository(User)
+    const user = userRepo.findOne({id})
+    return user
+    
+  } catch(err){
+    return new ApolloError(err)
+  }
+}
+
 const users = async (_parent: any, { limit = 10, page = 1 }: IBaseQuery) => {
-  const userRepo = getRepository(User)
-  const [users, totalCount] = await userRepo.findAndCount({
-    skip: (page - 1) * limit,
-    take: limit,
-  })
+  try {
+    const userRepo = getRepository(User)
+    const [users, totalCount] = await userRepo.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    })
 
-  const pageCount = Math.ceil(totalCount / limit)
-  const count = users.length
+    const pageCount = Math.ceil(totalCount / limit)
+    const count = users.length
 
-  return {
-    payload: users,
-    totalCount,
-    count,
-    page,
-    pageCount,
+    return {
+      payload: users,
+      totalCount,
+      count,
+      page,
+      pageCount,
+    }
+  }
+  catch (err) {
+    return new ApolloError(err)
   }
 }
 
@@ -51,10 +72,9 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
       const savedUser = await userRepo.save(user)
       const authorization = createToken(savedUser)
       console.log(authorization)
-      console.log(authorizeToken(authorization.token))
+      console.log(await authorizeToken(authorization.token))
       return authorization
     }
-
 
     // Otherwise return our new user
     const newUser = await userRepo.create()
@@ -63,7 +83,9 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
     newUser.lastLoginDate = new Date()
     newUser.password = await bcrypt.hash(password, 10)
     const savedUser = await userRepo.save(newUser)
-    return createToken(savedUser)
+
+    const authorization = createToken(savedUser)
+    return authorization
   } catch (err) {
     console.log(err)
     return new ApolloError(err)
@@ -77,8 +99,8 @@ const updateUser = async (
   { authorization }: IContext,
 ) => {
   if (!authorization) return new ApolloError('Not logged in')
-  const token = authorizeToken(authorization)
-  console.log(token)
+  const {id} = await authorizeToken(authorization)
+  console.log(id)
 
   const userRepo = getRepository(User)
   const user = await userRepo.findOne('context.user.id')
@@ -116,6 +138,7 @@ const removeUser = async (
 
 const UserResolver = {
   Query: {
+    user,
     users,
   },
   Mutation: {

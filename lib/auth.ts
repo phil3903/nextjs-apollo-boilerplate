@@ -30,9 +30,7 @@ export const authorizeToken = async (authorization: string): Promise<IUserToken>
     throw Error('Missing JWT_SECRET')
   }
 
-  
-  const token = await jwt.verify(authorization, JWT_SECRET)
-  console.log(token)
-  
-  return {id: '', name: ''}
+  // Typescript no-no's - probably shouldn't cast to anything
+  const token = await jwt.verify(authorization, JWT_SECRET) as IUserToken
+  return {id: token.id, name: token.name}
 }
