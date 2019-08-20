@@ -9,6 +9,7 @@ import { Instructions } from '../components/Instructions'
 import { IFormData } from '../components/FormElements/Form'
 import { IUser } from '../models/user.model'
 
+
 export const GET_USERS = gql`
   query GetUsers($page: Int, $limit: Int) {
     users(limit: $limit, page: $page) {
@@ -38,8 +39,8 @@ const LOGIN_OR_CREATE = gql`
       password: $password
       photo: $photo
     ) {
-      id
-      name
+      expiresIn
+      token
     }
   }
 `
@@ -48,11 +49,13 @@ const Index = (props:any) => {
   //const router = useRouter()
   const [loginOrCreate] = useMutation(LOGIN_OR_CREATE)
 
-  const handleLogin = (variables: IFormData[]) => {
-    console.log(variables)
+  const handleLogin = async (variables: IFormData[]) => {
     loginOrCreate({
-      variables
+      variables,
     })
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
+  
     //router.push('/todos/list')
   }
 
@@ -81,7 +84,7 @@ const Index = (props:any) => {
             <SubmitButton text={'Login'} />
           </Form>
         </div>
-        <div className="col-lg-3" />
+        <div className="col-xl-3" />
       </div>
     </>
   )

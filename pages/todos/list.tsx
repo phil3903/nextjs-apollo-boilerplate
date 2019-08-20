@@ -42,7 +42,7 @@ const Todos = () => {
             <SubmitButton text={'Create Todo'}/>
           </Form>
         </div>
-        <div className="col-lg-3" />
+        <div className="col-xl-3" />
       </div>
     </>
   )

@@ -1,7 +1,5 @@
-import { IUser } from 'models/user.model'
-
 export interface IContext {
-  user: IUser
+  authorization: string
 }
 
 export interface IBaseQuery {

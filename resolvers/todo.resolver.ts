@@ -2,10 +2,12 @@ import { getRepository } from 'typeorm'
 import { ApolloError } from 'apollo-server-express'
 import Todo, { ITodo } from '../models/todo.model'
 import { IContext, IBaseQuery } from '../types'
+import { authorizeToken } from '../lib/auth'
 
 /* Queries */
 
-const todo = async (_parent: any, { id }: { id: string }) => {
+const todo = async (_parent: any, { id }: { id: string }, { authorization }: IContext,) => {
+  if (!authorization) return new ApolloError('Not logged in')
   const todoRepo = getRepository(Todo)
   return await todoRepo.findOne(id)
 }
@@ -13,9 +15,9 @@ const todo = async (_parent: any, { id }: { id: string }) => {
 const todos = async (
   _parent: any,
   { limit = 10, page = 1 }: IBaseQuery,
-  { user }: IContext,
+  { authorization }: IContext,
 ) => {
-  if (!user) return null
+  if (!authorization) return new ApolloError('Not logged in')
 
   const todoRepo = getRepository(Todo)
   const [payload, totalCount] = await todoRepo.findAndCount({
@@ -40,8 +42,13 @@ const todos = async (
 const createTodo = async (
   _parent: any,
   { isComplete, dueDate, title, description }: ITodo,
+  { authorization }: IContext,
 ) => {
   console.log(_parent)
+  if (!authorization) return new ApolloError('Not logged in')
+  const token = authorizeToken(authorization)
+  console.log(token)
+
   const todoRepo = getRepository(Todo)
   const todo = await todoRepo.create()
   todo.isComplete = isComplete
@@ -54,7 +61,12 @@ const createTodo = async (
 const updateTodo = async (
   _parent: any,
   { id, isComplete, dueDate, title, description }: ITodo,
+  { authorization }: IContext,
 ) => {
+  if (!authorization) return new ApolloError('Not logged in')
+  const token = authorizeToken(authorization)
+  console.log(token)
+
   const todoRepo = getRepository(Todo)
   const todo = await todoRepo.findOne(id)
 
@@ -70,7 +82,15 @@ const updateTodo = async (
   return await todoRepo.save(todo)
 }
 
-const removeTodo = async (_parent: any, { id }: { id: string }) => {
+const removeTodo = async (
+  _parent: any, 
+  { id }: { id: string },
+  { authorization }: IContext,
+) => {
+  if (!authorization) return new ApolloError('Not logged in')
+  const token = authorizeToken(authorization)
+  console.log(token)
+
   const todoRepo = getRepository(Todo)
   const todo = await todoRepo.findOne(id)
 

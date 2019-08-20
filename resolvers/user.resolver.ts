@@ -3,8 +3,7 @@ import { ApolloError } from 'apollo-server-express'
 import bcrypt from 'bcryptjs'
 import User, { IUser } from '../models/user.model'
 import { IBaseQuery, IContext } from 'types'
-import { createToken } from '../server/auth'
-
+import { createToken, authorizeToken } from '../lib/auth'
 
 /* Queries */
 
@@ -42,19 +41,18 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
       .addSelect('user.password')
       .getOne()
 
-    console.log(user)
-
     // If we find a user then validate
     if(user){
       const isValid = await bcrypt.compare(password, user.password)
-      console.log(isValid)
       if (!isValid) {
         return new ApolloError('Wrong Password')
       }
       user.lastLoginDate = new Date()
-      await userRepo.save(user)
-      console.log(createToken(user))
-      return user //createToken(user)
+      const savedUser = await userRepo.save(user)
+      const authorization = createToken(savedUser)
+      console.log(authorization)
+      console.log(authorizeToken(authorization.token))
+      return authorization
     }
 
 
@@ -64,11 +62,10 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
     newUser.photo = photo
     newUser.lastLoginDate = new Date()
     newUser.password = await bcrypt.hash(password, 10)
-    console.log(newUser)
     const savedUser = await userRepo.save(newUser)
-    console.log(savedUser)
-    return savedUser //createToken(savedUser)
+    return createToken(savedUser)
   } catch (err) {
+    console.log(err)
     return new ApolloError(err)
   }
 }
@@ -77,10 +74,14 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
 const updateUser = async (
   _parent: any,
   { name, photo }: IUser,
-  context: IContext,
+  { authorization }: IContext,
 ) => {
+  if (!authorization) return new ApolloError('Not logged in')
+  const token = authorizeToken(authorization)
+  console.log(token)
+
   const userRepo = getRepository(User)
-  const user = await userRepo.findOne(context.user.id)
+  const user = await userRepo.findOne('context.user.id')
 
   if (!user) {
     return new ApolloError('User does not exist')
@@ -92,9 +93,17 @@ const updateUser = async (
   return await userRepo.save(user)
 }
 
-const removeUser = async (_parent: any, _variables: any, context: IContext) => {
+const removeUser = async (
+  _parent: any, 
+  _variables: any, 
+  { authorization }: IContext
+) => {
+  if (!authorization) return new ApolloError('Not logged in')
+  const token = authorizeToken(authorization)
+  console.log(token)
+
   const userRepo = getRepository(User)
-  const user = await userRepo.findOne(context.user.id)
+  const user = await userRepo.findOne('context.user.id')
 
   if (!user) {
     return new ApolloError('User does not exist')

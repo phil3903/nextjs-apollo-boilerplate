@@ -33,6 +33,7 @@ const Scrollable = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: visible;
   max-height: 700px;
 
 `

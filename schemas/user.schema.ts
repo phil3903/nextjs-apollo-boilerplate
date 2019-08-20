@@ -6,7 +6,7 @@ export default gql`
   }
 
   extend type Mutation {
-    loginOrCreate(name: String!, password: String!,  photo: String): User
+    loginOrCreate(name: String!, password: String!,  photo: String): UserToken
     updateUser(name: String, photo: String): User
     removeUser(id: ID!): User
   }
@@ -19,6 +19,11 @@ export default gql`
     name: String
     photo: String
     todos: [Todo]
+  }
+
+  type UserToken {
+    expiresIn: Int!
+    token: String!
   }
 
   type UsersResult {

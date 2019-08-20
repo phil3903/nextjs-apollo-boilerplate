@@ -4,7 +4,7 @@ require('dotenv-extended').load({
 })
 import 'reflect-metadata'
 import express from 'express'
-import { ApolloServer, AuthenticationError } from 'apollo-server-express'
+import { ApolloServer } from 'apollo-server-express'
 import { createConnection } from 'typeorm'
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions'
 import nextapp from './nextapp'
@@ -13,7 +13,6 @@ import schema from '../schemas'
 import resolvers from '../resolvers'
 import entities from '../models'
 import PagesRouter from './pages.routes'
-import { authorizeToken } from './auth'
 
 /* Express */
 const app = express()
@@ -36,6 +35,11 @@ async function main() {
     const apolloServer = new ApolloServer({
       typeDefs: schema,
       resolvers,
+      context: ({req}) => {
+        return {
+          authorization: req.headers.authorization
+        }
+      }
     })
 
     apolloServer.applyMiddleware({ app, path: '/graphql' })
@@ -49,15 +53,15 @@ async function main() {
 main()
 
 
-const handleJWT = ({ req }: any) => {
-  const token = String(req.headers.token)
-  if(!token) throw new AuthenticationError('you are not logged in')
+// const handleJWT = ({ req }: any) => {
+//   const token = String(req.headers.token)
+//   if(!token) throw new AuthenticationError('you are not logged in')
 
-  const user = authorizeToken(token)
-  if(!user) throw new AuthenticationError('you are not logged in')
+//   const user = authorizeToken(token)
+//   if(!user) throw new AuthenticationError('you are not logged in')
 
-  return {user}
-}
-console.log(handleJWT)
+//   return {user}
+// }
+// console.log(handleJWT)
 
 
