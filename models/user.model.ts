@@ -36,5 +36,5 @@ export default class User extends BaseModel {
   lastLoginDate: Date
 
   @OneToMany(() => Todo, todo => todo.user)
-  todos: Promise<Todo[]>
+  todos: Todo[]
 }

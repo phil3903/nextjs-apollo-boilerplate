@@ -52,16 +52,3 @@ async function main() {
 
 main()
 
-
-// const handleJWT = ({ req }: any) => {
-//   const token = String(req.headers.token)
-//   if(!token) throw new AuthenticationError('you are not logged in')
-
-//   const user = authorizeToken(token)
-//   if(!user) throw new AuthenticationError('you are not logged in')
-
-//   return {user}
-// }
-// console.log(handleJWT)
-
-

@@ -1,14 +1,14 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import {Circle, Text as Username} from './User'
+import { Circle, Text as Username } from './User'
+import { format } from 'date-fns'
 
 interface IUserStatsProps {
   name: string
   createdDate: Date
-  todoCount: number
 }
 
-const UserStats = ({name, createdDate, todoCount}: IUserStatsProps) => {
+const UserStats = ({name, createdDate}: IUserStatsProps) => {
   return(
     <div>
       <Heading>
@@ -17,11 +17,7 @@ const UserStats = ({name, createdDate, todoCount}: IUserStatsProps) => {
       </Heading>
       <Row>
         <LeftText>User Since:</LeftText>
-        <RightText>{createdDate}</RightText>
-      </Row>
-      <Row>
-        <LeftText>Todos:</LeftText>
-        <RightText>{todoCount}</RightText>
+        <RightText>{format(createdDate, 'MMM do, YYYY')}</RightText>
       </Row>
     </div>
   )

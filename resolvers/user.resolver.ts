@@ -56,8 +56,7 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
     }
 
     const userRepo = getRepository(User)
-    const user = await userRepo
-      .createQueryBuilder('user')
+    const user = await userRepo.createQueryBuilder('user')
       .where('user.name = :name', {name})
       .addSelect('user.password')
       .getOne()

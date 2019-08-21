@@ -7,7 +7,7 @@ export default gql`
   }
 
   extend type Mutation {
-    createTodo(isComplete: Boolean, dueDate: Date!, title: String!, description: String!): Todo
+    createTodo(dueDate: Date!, title: String!, description: String!): Todo
     updateTodo(id: ID!, isComplete: Boolean, dueDate: Date, title: String, description: String): Todo
     removeTodo(id: ID!): Todo
   }

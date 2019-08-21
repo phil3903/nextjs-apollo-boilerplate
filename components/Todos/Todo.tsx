@@ -4,11 +4,10 @@ import styled from '@emotion/styled'
 interface ITodoProps {
   isComplete: boolean,
   title: string,
-  date: string,
   description: string
 }
 
-const Todo = ({isComplete, title, date, description}: ITodoProps) => {
+const Todo = ({isComplete, title, description}: ITodoProps) => {
   return (
     <Card isComplete={isComplete}>
       <Row>
@@ -16,7 +15,7 @@ const Todo = ({isComplete, title, date, description}: ITodoProps) => {
           {title}
         </Title>
         <Date>
-          {date}
+          {''}
         </Date>
       </Row>
       <Description>

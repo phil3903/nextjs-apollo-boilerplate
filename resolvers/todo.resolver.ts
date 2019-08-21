@@ -3,26 +3,29 @@ import { ApolloError } from 'apollo-server-express'
 import Todo, { ITodo } from '../models/todo.model'
 import { IContext, IBaseQuery } from '../types'
 import { authorizeToken } from '../lib/auth'
+import User from '../models/user.model'
 
 /* Queries */
 
 const todo = async (_parent: any, { id }: { id: string }, { authorization }: IContext,) => {
   if (!authorization) return new ApolloError('Not logged in')
+  const user = await authorizeToken(authorization)
+  console.log(user)
   const todoRepo = getRepository(Todo)
   return await todoRepo.findOne(id)
 }
 
 const todos = async (
   _parent: any,
-  { limit = 10, page = 1 }: IBaseQuery,
+  { limit = 100, page = 1 }: IBaseQuery,
   { authorization }: IContext,
 ) => {
+  console.log('get todos')
   if (!authorization) return new ApolloError('Not logged in')
-
+  const user = await authorizeToken(authorization)
   const todoRepo = getRepository(Todo)
   const [payload, totalCount] = await todoRepo.findAndCount({
-    skip: (page - 1) * limit,
-    take: limit,
+    where: {user: user.id}
   })
 
   const pageCount = Math.ceil(totalCount / limit)
@@ -41,20 +44,23 @@ const todos = async (
 
 const createTodo = async (
   _parent: any,
-  { isComplete, dueDate, title, description }: ITodo,
+  { dueDate, title, description }: ITodo,
   { authorization }: IContext,
 ) => {
-  console.log(_parent)
+  console.log('create todo')
   if (!authorization) return new ApolloError('Not logged in')
-  const token = authorizeToken(authorization)
-  console.log(token)
-
+  const {id} = await authorizeToken(authorization)
+  const userRepo = getRepository(User)
   const todoRepo = getRepository(Todo)
+
+  const user = await userRepo.findOne({where: {id}})
+  console.log(user)
+  if(!user) return new ApolloError('Unable to find user')
   const todo = await todoRepo.create()
-  todo.isComplete = isComplete
   todo.dueDate = dueDate
   todo.title = title
   todo.description = description
+  todo.user = user
   return await todoRepo.save(todo)
 }
 

@@ -1,13 +1,12 @@
 import React from 'react'
 import { gql } from 'apollo-boost'
-import { useQuery } from '@apollo/react-hooks'
-import { format } from 'date-fns'
+import { useMutation } from '@apollo/react-hooks'
 import { UserStats } from '../../components/Users'
-import { Todo, TodoList } from '../../components/Todos'
+import { TodoList } from '../../components/Todos'
 import { Form, Input, SubmitButton } from '../../components/FormElements'
-import { IFormData } from '../../components/FormElements/Form'
+//import { IFormData } from '../../components/FormElements/Form'
 import { IUser } from '../../models/user.model'
-import { ITodo } from '../../models/todo.model'
+import { GET_TODOS } from '../../components/Todos/TodoList'
 
 export const GET_USER = gql`
   query GetUser {
@@ -19,62 +18,51 @@ export const GET_USER = gql`
   }
 `
 
-export const GET_TODOS = gql`
-  query GetTodos($limit: Int){
-    todos(limit: $limit){
-      totalCount
-      payload {
-        id
-        title
-        description
-        dueDate
-        isComplete
-      }
+export const CREATE_TODO = gql`
+  mutation CreateTodo(
+    $title: String!
+    $description: String!
+    $dueDate: Date!
+  ) {
+    createTodo(
+      title: $title
+      description: $description
+      dueDate: $dueDate
+    ) {
+      id
+      title
+      description
+      isComplete
     }
   }
 `
 
-const Todos = ({ user }: {user: IUser}) => {
-  const {loading, error, data} = useQuery(GET_TODOS, {
-    variables: {limit: 100}
-  })
-
-  if (loading) return <pre>Loading...</pre>
-  if (error) return <pre>Error! {error.message}</pre>
-
-  const handleCreate = (data: IFormData[]) => {
-    console.log(data)
+const Todos = ({ user }: { user: IUser }) => {
+  const [createTodo] = useMutation(CREATE_TODO)
+  const handleCreate = (data: any) => {
+    createTodo({
+      variables: {...data, dueDate: new Date()},
+      refetchQueries: [{
+        query: GET_TODOS,
+        variables: {limit: 100}
+      }]
+    })
   }
 
   return (
     <>
       <div className="row">
         <div className="col-sm-2">
-          <UserStats
-            name={user.name}
-            createdDate={user.createdDate}
-            todoCount={data.count}
-          />
+          <UserStats name={user.name} createdDate={user.createdDate} />
         </div>
         <div className="col-sm-1" />
         <div className="col-sm-3">
-          <TodoList title="Todos">
-            {data.todos.payload.map((todo: ITodo) => (
-              <Todo
-                key={todo.id}
-                isComplete={false}
-                title="My Todo"
-                date={format(new Date(), 'MMM do, YYYY')}
-                description="This is the long form description"
-              />
-            ))}
-          </TodoList>
+          <TodoList />
         </div>
         <div className="col-sm-3">
           <Form title={'Create'} onSubmit={handleCreate}>
             <Input name="title" placeholder={'Title'} />
             <Input name="description" placeholder={'Description'} />
-            <Input name="date" placeholder={'Due Date'} type="date" />
             <SubmitButton text={'Create Todo'} />
           </Form>
         </div>

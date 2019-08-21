@@ -29,5 +29,5 @@ export default class Todo extends BaseModel {
     eager: true, //loads automatically
     nullable: false,
   })
-  user: Promise<User[]>
+  user: User
 }

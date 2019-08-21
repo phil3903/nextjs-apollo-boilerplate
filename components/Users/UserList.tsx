@@ -34,6 +34,7 @@ const Scrollable = styled.div`
   flex-direction: column;
   overflow-y: auto;
   max-height: 700px;
+  min-height: 700px;
 
 `
 
