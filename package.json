@@ -36,6 +36,7 @@
     "@emotion/styled": "^10.0.15",
     "@types/bcryptjs": "^2.4.2",
     "apollo-boost": "^0.4.4",
+    "apollo-link-context": "^1.0.18",
     "apollo-server": "^2.8.1",
     "apollo-server-express": "^2.8.1",
     "bad-words": "^3.0.3",
