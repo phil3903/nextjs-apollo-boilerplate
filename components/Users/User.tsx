@@ -3,12 +3,20 @@ import styled from '@emotion/styled'
 
 interface IUserProps {
   name?: string,
-  photo?: string
+  photo?: string,
+  isSelected?: boolean,
+  onClick: Function
 }
 
-const User = ({name}: IUserProps) => {
+const User = ({name, isSelected, onClick}: IUserProps) => {
+  const handleClick = () => {
+    onClick()
+  }
   return (
-    <Card>
+    <Card 
+      isSelected={isSelected}
+      onClick={handleClick}
+    >
       <Circle />
       <Text>
         {name}
@@ -17,7 +25,9 @@ const User = ({name}: IUserProps) => {
   )
 }
 
-const Card = styled.button`
+const Card = styled.button<{
+  isSelected?: boolean
+}>`
   display: flex;
   align-items: center;
   height: 72px;
@@ -29,10 +39,7 @@ const Card = styled.button`
   box-sizing: border-box;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border: 4px solid transparent;
-  &:focus {
-    border: 4px solid #F3E9D2;
-  }
-
+  ${({ isSelected }) => isSelected ? 'border: 4px solid #F3E9D2' : 'none' };
 `
 
 export const Circle = styled.div`

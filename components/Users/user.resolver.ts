@@ -1,36 +1,28 @@
 import {gql, InMemoryCache} from 'apollo-boost'
 import { IUser } from '../../models/user.model'
 
-const GET_ACTIVE_USER = gql`
-  query GetActiveUser {
-    activeUser @client
+const GET_SELECTED_USER = gql`
+  query GetSelectedUser {
+    selectedUser @client
   }
 `
 
 interface ActiveUserResults {
-  activeUser: string
+  selectedUser: string
 }
 
 const userResolver = {
   Mutation:{
-    setActiveUser: (
-      _:any, 
-      {id}: {id: string}, 
-      {cache}: {cache: InMemoryCache}
-    ) =>{
-
-      cache.writeData({
-        data: {
-          activeUser: id
-        }
-      })
+    setSelectedUser: (_:any, {name}: {name: string}, {cache}: {cache: InMemoryCache}) =>{
+      console.log(name)
+      cache.writeData({ data: {selectedUser: name} })
       return null
     }
   },
   User: {
-    isActive: (user: IUser, _variables:any,  {cache}:{cache: InMemoryCache}) =>{
-      const activeUser = cache.readQuery<ActiveUserResults>({query: GET_ACTIVE_USER})!.activeUser
-      return activeUser === user.id
+    isSelected: (user: IUser, _variables:any,  {cache}:{cache: InMemoryCache}) =>{
+      const selectedUser = cache.readQuery<ActiveUserResults>({query: GET_SELECTED_USER})!.selectedUser
+      return selectedUser === user.name
     }
   },
 }
