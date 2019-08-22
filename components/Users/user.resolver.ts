@@ -14,7 +14,6 @@ interface ActiveUserResults {
 const userResolver = {
   Mutation:{
     setSelectedUser: (_:any, {name}: {name: string}, {cache}: {cache: InMemoryCache}) =>{
-      console.log(name)
       cache.writeData({ data: {selectedUser: name} })
       return null
     }

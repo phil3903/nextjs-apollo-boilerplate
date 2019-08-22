@@ -70,5 +70,6 @@ const Description = styled.p`
   font-style: normal;
   font-weight: 300;
   font-size: 12px;
+  text-align: left;
 `
 export default Todo

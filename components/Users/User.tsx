@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import {FiUser} from 'react-icons/fi'
 
 interface IUserProps {
   name?: string,
@@ -17,7 +18,9 @@ const User = ({name, isSelected, onClick}: IUserProps) => {
       isSelected={isSelected}
       onClick={handleClick}
     >
-      <Circle />
+      <Circle>
+        <FiUser />
+      </Circle>
       <Text>
         {name}
       </Text>
@@ -43,10 +46,17 @@ const Card = styled.button<{
 `
 
 export const Circle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
   margin-right: 24px;
   background: #fcfcfc;
   height: 32px;
   width: 32px;
+  min-height: 32px;
+  min-width: 32px;
+  color: #212121;
   border-radius: 32px;
 `
 export const Text = styled.p`

@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { gql } from 'apollo-boost'
 import { useMutation } from '@apollo/react-hooks'
 import { UserStats } from '../../components/Users'
 import { TodoList } from '../../components/Todos'
-import { Form, Input, SubmitButton } from '../../components/FormElements'
+import { Form, SubmitButton, StyledInput } from '../../components/FormElements'
 //import { IFormData } from '../../components/FormElements/Form'
 import { IUser } from '../../models/user.model'
 import { GET_TODOS } from '../../components/Todos/TodoList'
@@ -38,31 +38,67 @@ export const CREATE_TODO = gql`
 `
 
 const Todos = ({ user }: { user: IUser }) => {
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
   const [createTodo] = useMutation(CREATE_TODO)
-  const handleCreate = (data: any) => {
+
+  const handleCreate = () => {
     createTodo({
-      variables: {...data, dueDate: new Date()},
+      variables: {
+        title,
+        description,
+        dueDate: new Date()
+      },
       refetchQueries: [{
         query: GET_TODOS,
         variables: {limit: 100}
       }]
+    }).then(() => {
+      setTitle('')
+      setDescription('')
     })
+  }
+
+  const handleTitleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+  }
+
+  const handleDescriptionUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value)
   }
 
   return (
     <>
       <div className="row">
         <div className="col-sm-2">
-          <UserStats name={user.name} createdDate={user.createdDate} />
+          <UserStats 
+            name={user.name} 
+            createdDate={String(user.createdDate)} 
+          />
         </div>
         <div className="col-sm-1" />
         <div className="col-sm-3">
           <TodoList />
         </div>
         <div className="col-sm-3">
-          <Form title={'Create'} onSubmit={handleCreate}>
-            <Input name="title" placeholder={'Title'} />
-            <Input name="description" placeholder={'Description'} />
+          <Form 
+            title={'Create'} 
+            onSubmit={handleCreate}
+          >
+            <StyledInput 
+                type="text"
+                name="title" 
+                placeholder="Title"
+                value={ title }
+                onChange={ handleTitleUpdate }
+              />
+              <StyledInput 
+                type="text"
+                name="description" 
+                placeholder="Description"
+                value={ description }
+                onChange={ handleDescriptionUpdate }
+              />
             <SubmitButton text={'Create Todo'} />
           </Form>
         </div>

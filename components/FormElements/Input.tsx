@@ -14,10 +14,6 @@ const Input = ({placeholder, name, type}: InputProps) => {
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value)
   }
-
-  // const handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   console.log(e)
-  // }
   
   return (
     <StyledInput 
@@ -35,7 +31,7 @@ Input.defaultProps = {
   type: 'text'
 }
 
-const StyledInput = styled.input`
+export const StyledInput = styled.input`
   font-family: 'Poppins Light';
   font-size: 14px;
   height: 40px;

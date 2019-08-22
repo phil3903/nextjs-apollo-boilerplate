@@ -1,16 +1,16 @@
 import { getRepository } from 'typeorm'
-import { ApolloError } from 'apollo-server-express'
+import { ApolloError, AuthenticationError } from 'apollo-server-express'
 import bcrypt from 'bcryptjs'
 import User, { IUser } from '../models/user.model'
 import { IBaseQuery, IContext } from 'types'
-import { createToken, authorizeToken } from '../lib/auth'
+import { createToken, authorizeToken, authorizeUser } from '../lib/auth'
 
 /* Queries */
 
 const user = async (_parent: any, _variables: any, {authorization}: IContext) => {
   try {
     if(!authorization) {
-      return new ApolloError('You are not authorized')
+      return new AuthenticationError('You are not authorized')
     }
 
     const {id} = await authorizeToken(authorization)
@@ -19,7 +19,7 @@ const user = async (_parent: any, _variables: any, {authorization}: IContext) =>
     return user
     
   } catch(err){
-    return new ApolloError(err)
+    throw new ApolloError(err)
   }
 }
 
@@ -43,7 +43,7 @@ const users = async (_parent: any, { limit = 10, page = 1 }: IBaseQuery) => {
     }
   }
   catch (err) {
-    return new ApolloError(err)
+    throw new ApolloError(err)
   }
 }
 
@@ -52,7 +52,7 @@ const users = async (_parent: any, { limit = 10, page = 1 }: IBaseQuery) => {
 const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => {
   try{
     if(!password) {
-      return new ApolloError('No Password Provided')
+      throw new AuthenticationError('No Password Provided')
     }
 
     const userRepo = getRepository(User)
@@ -65,13 +65,11 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
     if(user){
       const isValid = await bcrypt.compare(password, user.password)
       if (!isValid) {
-        return new ApolloError('Wrong Password')
+        throw new AuthenticationError('Wrong Password')
       }
       user.lastLoginDate = new Date()
       const savedUser = await userRepo.save(user)
       const authorization = createToken(savedUser)
-      console.log(authorization)
-      console.log(await authorizeToken(authorization.token))
       return authorization
     }
 
@@ -86,8 +84,7 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
     const authorization = createToken(savedUser)
     return authorization
   } catch (err) {
-    console.log(err)
-    return new ApolloError(err)
+    throw new ApolloError(err)
   }
 }
 
@@ -97,21 +94,18 @@ const updateUser = async (
   { name, photo }: IUser,
   { authorization }: IContext,
 ) => {
-  if (!authorization) return new ApolloError('Not logged in')
-  const {id} = await authorizeToken(authorization)
-  console.log(id)
+  try {
+    const user = await authorizeUser(authorization)
+    const userRepo = getRepository(User)
 
-  const userRepo = getRepository(User)
-  const user = await userRepo.findOne('context.user.id')
+    user.name = name || user.name
+    user.photo = photo || user.photo
 
-  if (!user) {
-    return new ApolloError('User does not exist')
+    return await userRepo.save(user)
+  } 
+  catch(err){
+    throw new ApolloError(err)
   }
-
-  user.name = name || user.name
-  user.photo = photo || user.photo
-
-  return await userRepo.save(user)
 }
 
 const removeUser = async (
@@ -119,18 +113,18 @@ const removeUser = async (
   _variables: any, 
   { authorization }: IContext
 ) => {
-  if (!authorization) return new ApolloError('Not logged in')
-  const token = authorizeToken(authorization)
-  console.log(token)
+  try {
+    const user = await authorizeUser(authorization)
+    const {id} = await authorizeToken(authorization)
+    const userRepo = getRepository(User)
 
-  const userRepo = getRepository(User)
-  const user = await userRepo.findOne('context.user.id')
-
-  if (!user) {
-    return new ApolloError('User does not exist')
+    if (user.id === id){
+      return await userRepo.remove(user)
+    }
   }
-
-  return await userRepo.remove(user)
+  catch(err) {
+    throw new ApolloError("Nope, this ain't you.")
+  }
 }
 
 /* Resolver */

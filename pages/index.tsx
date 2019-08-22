@@ -1,17 +1,13 @@
-import React from 'react'
+import React,  { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import { UserList, User } from '../components/Users'
-import { Form, Input, SubmitButton } from '../components/FormElements'
+import { Form, Input, SubmitButton, StyledInput } from '../components/FormElements'
 import { Instructions } from '../components/Instructions'
 import { IFormData } from '../components/FormElements/Form'
 import { IUser } from '../models/user.model'
 import cookie from 'cookie'
-
-interface IClientUser extends IUser {
-  isSelected: boolean
-}
 
 // Query for User List
 export const GET_USERS = gql`
@@ -50,27 +46,32 @@ const SET_SELECTED_USER = gql`
   }
 `
 
-const Index = () => {
+interface IClientUser extends IUser {
+  isSelected: boolean
+}
+
+// React Component
+const Index = (props: any) => {
   const router = useRouter()
   const client = useApolloClient()
   const { loading, data } = useQuery(GET_USERS)
   const [loginOrCreate] = useMutation(LOGIN_OR_CREATE)
   const [setSelectedUser] = useMutation(SET_SELECTED_USER)
+  const [username, setUsername] = useState('')
 
   const handleLogin = async (variables: IFormData[]) => {
     loginOrCreate({
-      variables,
+      variables: {...variables, name: username},
     })
-      //onSuccess
-      .then(res => {
-        const {token, expiresIn} = res.data.loginOrCreate
-        document.cookie = cookie.serialize('authorization', token, {
-          maxAge: expiresIn
-        })
-        // Force a reload of all the current queries and redirect
-        client.cache.reset().then(() => router.push('/todos/list'))
+    .then(res => {
+      const {token, expiresIn} = res.data.loginOrCreate
+      document.cookie = cookie.serialize('authorization', token, {
+        maxAge: expiresIn
       })
-      .catch(err => console.log(err))
+      // Force a reload of all the current queries and redirect
+      client.cache.reset().then(() => router.push('/todos/list'))
+    })
+    .catch(err => console.log(err))
   }
 
   const handleSetActiveUser = (name: string) => {
@@ -78,9 +79,25 @@ const Index = () => {
       variables: { name },
       refetchQueries: [{
         query: GET_USERS,
-      }]  
+      }],
+    }).then(()=>{
+      setUsername(name)
     })
   }
+
+  const handleUsernameUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value)
+    setSelectedUser({
+      variables: { name },
+      refetchQueries: [{
+        query: GET_USERS,
+      }],
+    })
+  }
+
+  const users = !loading && data && data.users 
+    ? data.users.payload 
+    : props.users.payload
 
   return (
     <>
@@ -91,7 +108,7 @@ const Index = () => {
         <div className="col-sm-1" />
         <div className="col-sm-3">
           <UserList>
-            {!loading && data.users.payload.map((user: IClientUser) => (
+            {users.map((user: IClientUser) => (
               <User 
                 key={user.id} 
                 name={user.name} 
@@ -104,7 +121,13 @@ const Index = () => {
         </div>
         <div className="col-sm-3">
           <Form title={'Login'} onSubmit={handleLogin}>
-            <Input name="name" placeholder={'Name'} />
+            <StyledInput 
+              type="text"
+              name="name" 
+              placeholder="Name"
+              value={ username }
+              onChange={ handleUsernameUpdate }
+            />
             <Input name="password" placeholder={'Password'} type="password" />
             <SubmitButton text={'Login'} />
           </Form>
@@ -115,9 +138,26 @@ const Index = () => {
   )
 }
 
-// Index.getInitialProps = async (context: any) => {
-//   const { data } = await context.apolloClient.query({ query: GET_USERS })
-//   return data
-// }
+Index.getInitialProps = async (context: any) => {
+  const INITIAL_USERS_QUERY = gql`
+  query GetUsers($page: Int, $limit: Int) {
+    users(limit: $limit, page: $page) {
+      totalCount
+      count
+      page
+      pageCount
+      payload {
+        id
+        createdDate
+        updatedDate
+        name
+        photo
+      }
+    }
+  }
+`
+  const { data } = await context.apolloClient.query({ query: INITIAL_USERS_QUERY })
+  return data
+}
 
 export default Index

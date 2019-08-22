@@ -2,17 +2,20 @@ import { getRepository } from 'typeorm'
 import { ApolloError } from 'apollo-server-express'
 import Todo, { ITodo } from '../models/todo.model'
 import { IContext, IBaseQuery } from '../types'
-import { authorizeToken } from '../lib/auth'
-import User from '../models/user.model'
+import { authorizeUser } from '../lib/auth'
+
 
 /* Queries */
 
 const todo = async (_parent: any, { id }: { id: string }, { authorization }: IContext,) => {
-  if (!authorization) return new ApolloError('Not logged in')
-  const user = await authorizeToken(authorization)
-  console.log(user)
+  try {
+  const user = await authorizeUser(authorization)
   const todoRepo = getRepository(Todo)
-  return await todoRepo.findOne(id)
+  return await todoRepo.findOne({where: {id, user}})
+  }
+  catch(err){
+    throw new ApolloError(err)
+  }
 }
 
 const todos = async (
@@ -20,23 +23,26 @@ const todos = async (
   { limit = 100, page = 1 }: IBaseQuery,
   { authorization }: IContext,
 ) => {
-  console.log('get todos')
-  if (!authorization) return new ApolloError('Not logged in')
-  const user = await authorizeToken(authorization)
-  const todoRepo = getRepository(Todo)
-  const [payload, totalCount] = await todoRepo.findAndCount({
-    where: {user: user.id}
-  })
+  try {
+    const user = await authorizeUser(authorization)
+    const todoRepo = getRepository(Todo)
+    const [payload, totalCount] = await todoRepo.findAndCount({
+      where: {user}
+    })
 
-  const pageCount = Math.ceil(totalCount / limit)
-  const count = payload.length
+    const pageCount = Math.ceil(totalCount / limit)
+    const count = payload.length
 
-  return {
-    payload,
-    totalCount,
-    count,
-    page,
-    pageCount,
+    return {
+      payload,
+      totalCount,
+      count,
+      page,
+      pageCount,
+    }
+  } 
+  catch (err) {
+    throw new ApolloError(err)
   }
 }
 
@@ -47,21 +53,19 @@ const createTodo = async (
   { dueDate, title, description }: ITodo,
   { authorization }: IContext,
 ) => {
-  console.log('create todo')
-  if (!authorization) return new ApolloError('Not logged in')
-  const {id} = await authorizeToken(authorization)
-  const userRepo = getRepository(User)
-  const todoRepo = getRepository(Todo)
-
-  const user = await userRepo.findOne({where: {id}})
-  console.log(user)
-  if(!user) return new ApolloError('Unable to find user')
-  const todo = await todoRepo.create()
-  todo.dueDate = dueDate
-  todo.title = title
-  todo.description = description
-  todo.user = user
-  return await todoRepo.save(todo)
+  try{
+    const user = await authorizeUser(authorization)
+    const todoRepo = getRepository(Todo)
+    const todo = await todoRepo.create()
+    todo.dueDate = dueDate
+    todo.title = title
+    todo.description = description
+    todo.user = user
+    return await todoRepo.save(todo)
+  }
+  catch (err) {
+    throw new ApolloError(err)
+  }
 }
 
 const updateTodo = async (
@@ -69,23 +73,25 @@ const updateTodo = async (
   { id, isComplete, dueDate, title, description }: ITodo,
   { authorization }: IContext,
 ) => {
-  if (!authorization) return new ApolloError('Not logged in')
-  const token = authorizeToken(authorization)
-  console.log(token)
+  try {
+    await authorizeUser(authorization)
+    const todoRepo = getRepository(Todo)
+    const todo = await todoRepo.findOne({where: {id}})
 
-  const todoRepo = getRepository(Todo)
-  const todo = await todoRepo.findOne(id)
+    if (!todo) {
+      throw new ApolloError('Todo does not exist')
+    }
 
-  if (!todo) {
-    return new ApolloError('Todo does not exist')
+    todo.isComplete = isComplete || todo.isComplete
+    todo.dueDate = dueDate || todo.dueDate
+    todo.description = description || todo.description
+    todo.title = title || todo.title
+
+    return await todoRepo.save(todo)
   }
-
-  todo.isComplete = isComplete || todo.isComplete
-  todo.dueDate = dueDate || todo.dueDate
-  todo.description = description || todo.description
-  todo.title = title || todo.title
-
-  return await todoRepo.save(todo)
+  catch (err) {
+    throw new ApolloError(err)
+  }
 }
 
 const removeTodo = async (
@@ -93,18 +99,20 @@ const removeTodo = async (
   { id }: { id: string },
   { authorization }: IContext,
 ) => {
-  if (!authorization) return new ApolloError('Not logged in')
-  const token = authorizeToken(authorization)
-  console.log(token)
+  try {
+    const user = await authorizeUser(authorization)
+    const todoRepo = getRepository(Todo)
+    const todo = await todoRepo.findOne({where: {id, user}})
 
-  const todoRepo = getRepository(Todo)
-  const todo = await todoRepo.findOne(id)
+    if (!todo) {
+      throw new ApolloError('Todo does not exist')
+    }
 
-  if (!todo) {
-    return new ApolloError('Todo does not exist')
+    return await todoRepo.remove(todo)
   }
-
-  return await todoRepo.remove(todo)
+  catch (err) {
+    throw new ApolloError(err)
+  }
 }
 
 /* Resolver */

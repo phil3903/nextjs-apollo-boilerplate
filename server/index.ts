@@ -4,9 +4,9 @@ require('dotenv-extended').load({
 })
 import 'reflect-metadata'
 import express from 'express'
+import cookie from 'cookie'
 import { ApolloServer } from 'apollo-server-express'
 import { createConnection } from 'typeorm'
-import cookie from 'cookie'
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions'
 import nextapp from './nextapp'
 

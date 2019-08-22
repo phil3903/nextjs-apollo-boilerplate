@@ -1,23 +1,26 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { Circle, Text as Username } from './User'
-import { format } from 'date-fns'
+import { parseISO, format } from 'date-fns'
+import {FiUser} from 'react-icons/fi'
 
 interface IUserStatsProps {
   name: string
-  createdDate: Date
+  createdDate: string
 }
 
 const UserStats = ({name, createdDate}: IUserStatsProps) => {
   return(
     <div>
       <Heading>
-        <Circle />
+        <Circle>
+          <FiUser />
+        </Circle>
         <Username>{name}</Username>
       </Heading>
       <Row>
         <LeftText>User Since:</LeftText>
-        <RightText>{format(createdDate, 'MMM do, YYYY')}</RightText>
+        <RightText>{format(parseISO(createdDate), 'MMM dd, yyyy')}</RightText>
       </Row>
     </div>
   )
