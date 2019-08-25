@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Next.js (React), Apollo (GraphQL), TypeScript, Express, TypeORM",
   "scripts": {
-    "dev": "nodemon",
-    "build": "next build && tsc --project tsconfig.server.json",
+    "dev": "cross-env nodemon",
+    "build": "cross-env next build && tsc --project tsconfig.server.json",
     "start": "cross-env node dist/server/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -45,6 +45,8 @@
     "class-validator": "^0.10.0",
     "cookie": "^0.4.0",
     "date-fns": "^2.0.0",
+    "date-fns-timezone": "^0.1.4",
+    "date-fns-tz": "^1.0.7",
     "express": "^4.17.1",
     "graphql": "^14.4.2",
     "isomorphic-unfetch": "^3.0.0",

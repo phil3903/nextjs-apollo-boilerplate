@@ -1,6 +1,5 @@
 import { Entity, Column, OneToMany } from 'typeorm'
 import { MinLength, MaxLength } from 'class-validator'
-
 import BaseModel, { IBase } from './base.model'
 import { ITodo } from './todo.model'
 import Todo from './todo.model'

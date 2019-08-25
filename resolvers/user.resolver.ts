@@ -9,15 +9,7 @@ import { createToken, authorizeToken, authorizeUser } from '../lib/auth'
 
 const user = async (_parent: any, _variables: any, {authorization}: IContext) => {
   try {
-    if(!authorization) {
-      return new AuthenticationError('You are not authorized')
-    }
-
-    const {id} = await authorizeToken(authorization)
-    const userRepo = getRepository(User)
-    const user = userRepo.findOne({id})
-    return user
-    
+    return await authorizeUser(authorization)
   } catch(err){
     throw new ApolloError(err)
   }

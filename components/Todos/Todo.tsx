@@ -1,22 +1,40 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import { FiCalendar } from 'react-icons/fi'
+import { parseISO, format } from 'date-fns';
+
+
+//const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone
+const FORMAT = 'MMM dd, yyyy'
+
 
 interface ITodoProps {
+  id: string,
+  onClick: (id: string, onClick: boolean) => void,
   isComplete: boolean,
   title: string,
-  description: string
+  description: string, 
+  dueDate: string,
 }
 
-const Todo = ({isComplete, title, description}: ITodoProps) => {
+const Todo = ({id, onClick, isComplete, title, description, dueDate}: ITodoProps) => {
+  
   return (
-    <Card isComplete={isComplete}>
+    <Card 
+      onClick={()=> onClick(id, !isComplete)}
+      isComplete={isComplete}
+    >
       <Row>
         <Title>
           {title}
         </Title>
-        <Date>
-          {''}
-        </Date>
+          
+          <Wrapper>
+            <Date>
+              {format(parseISO(dueDate), FORMAT)}
+            </Date>
+            <FiCalendar color={'#fcfcfc'}/>
+        </Wrapper>
       </Row>
       <Description>
         {description}
@@ -36,10 +54,13 @@ const Card = styled.button<{ isComplete: boolean }>`
   box-sizing: border-box;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border: 4px solid transparent;
-  &:focus {
-    border: 4px solid #F3E9D2;
-  }
   opacity: ${(props) => props.isComplete ? 0.5 : 1};
+`
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `
 
 const Row = styled.div`
@@ -63,6 +84,7 @@ const Date = styled.p`
   font-weight: 500;
   font-size: 12px;
   line-height: 1;
+  margin: 3px 8px 0 0;
 `
 
 const Description = styled.p`

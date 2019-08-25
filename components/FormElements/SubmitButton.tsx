@@ -22,6 +22,10 @@ const Button = styled.button`
   color: #fcfcfc;
   border: none;
   height: 40px;
+  border-radius: 2px;
+  &:hover{
+    background: #205060;
+  }
 `
 
 export default SubmitButton

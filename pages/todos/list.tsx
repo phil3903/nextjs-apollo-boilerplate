@@ -1,12 +1,20 @@
 import React, { useState } from 'react'
 import { gql } from 'apollo-boost'
 import { useMutation } from '@apollo/react-hooks'
+import Router from 'next/router'
 import { UserStats } from '../../components/Users'
 import { TodoList } from '../../components/Todos'
 import { Form, SubmitButton, StyledInput } from '../../components/FormElements'
-//import { IFormData } from '../../components/FormElements/Form'
 import { IUser } from '../../models/user.model'
 import { GET_TODOS } from '../../components/Todos/TodoList'
+
+
+const addTimezoneOffset = (dateString: string) => {
+  const date = new Date(dateString)
+  const timeOffsetInMS = date.getTimezoneOffset() * 60000;
+  const dateWithOffset = date.setTime(date.getTime() + timeOffsetInMS)
+  return new Date(dateWithOffset)
+}
 
 export const GET_USER = gql`
   query GetUser {
@@ -40,6 +48,7 @@ export const CREATE_TODO = gql`
 const Todos = ({ user }: { user: IUser }) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [dueDate, setDueDate] = useState('')
   const [createTodo] = useMutation(CREATE_TODO)
 
   const handleCreate = () => {
@@ -47,7 +56,7 @@ const Todos = ({ user }: { user: IUser }) => {
       variables: {
         title,
         description,
-        dueDate: new Date()
+        dueDate: addTimezoneOffset(dueDate)
       },
       refetchQueries: [{
         query: GET_TODOS,
@@ -56,6 +65,7 @@ const Todos = ({ user }: { user: IUser }) => {
     }).then(() => {
       setTitle('')
       setDescription('')
+      setDueDate('')
     })
   }
 
@@ -65,6 +75,11 @@ const Todos = ({ user }: { user: IUser }) => {
 
   const handleDescriptionUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDescription(e.target.value)
+  }
+
+  const handleDueDateUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    addTimezoneOffset(e.target.value)
+    setDueDate(e.target.value)
   }
 
   return (
@@ -99,6 +114,13 @@ const Todos = ({ user }: { user: IUser }) => {
                 value={ description }
                 onChange={ handleDescriptionUpdate }
               />
+              <StyledInput 
+                type="date"
+                name="dueDate" 
+                placeholder="Date"
+                value={ dueDate }
+                onChange={ handleDueDateUpdate }
+              />
             <SubmitButton text={'Create Todo'} />
           </Form>
         </div>
@@ -108,11 +130,19 @@ const Todos = ({ user }: { user: IUser }) => {
   )
 }
 
-// Typescript no-no's - /lib/init-apollo.js & with-apollo-client.js
-// need to be addressed.
 Todos.getInitialProps = async (context: any) => {
-  const { data } = await context.apolloClient.query({ query: GET_USER })
-  return data || {}
+  try {
+    const { data } = await context.apolloClient.query({ query: GET_USER })
+    return data || {}
+  } catch (err) {
+    const { res } = context 
+    if(res) {
+      res.writeHead(302, { Location: '/'})
+      res.end()
+    } else  {
+      Router.replace('/')
+    }
+  }
 }
 
 export default Todos

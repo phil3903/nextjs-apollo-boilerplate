@@ -27,7 +27,11 @@ const todos = async (
     const user = await authorizeUser(authorization)
     const todoRepo = getRepository(Todo)
     const [payload, totalCount] = await todoRepo.findAndCount({
-      where: {user}
+      where: {user},
+      order: {
+        dueDate: "DESC", 
+        isComplete: "ASC"
+      }
     })
 
     const pageCount = Math.ceil(totalCount / limit)
@@ -82,7 +86,7 @@ const updateTodo = async (
       throw new ApolloError('Todo does not exist')
     }
 
-    todo.isComplete = isComplete || todo.isComplete
+    todo.isComplete = isComplete != null ? isComplete : todo.isComplete
     todo.dueDate = dueDate || todo.dueDate
     todo.description = description || todo.description
     todo.title = title || todo.title

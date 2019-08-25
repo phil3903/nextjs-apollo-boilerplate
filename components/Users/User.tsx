@@ -50,7 +50,7 @@ export const Circle = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  margin-right: 24px;
+  margin-right: 16px;
   background: #fcfcfc;
   height: 32px;
   width: 32px;

@@ -60,18 +60,19 @@ const Index = (props: any) => {
   const [username, setUsername] = useState('')
 
   const handleLogin = async (variables: IFormData[]) => {
-    loginOrCreate({
-      variables: {...variables, name: username},
-    })
-    .then(res => {
-      const {token, expiresIn} = res.data.loginOrCreate
-      document.cookie = cookie.serialize('authorization', token, {
-        maxAge: expiresIn
+    try {
+      const res = await loginOrCreate({
+        variables: {...variables, name: username},
       })
-      // Force a reload of all the current queries and redirect
-      client.cache.reset().then(() => router.push('/todos/list'))
-    })
-    .catch(err => console.log(err))
+      const {token, expiresIn} = res.data.loginOrCreate
+      document.cookie = await cookie.serialize('authorization', token, {
+        maxAge: expiresIn,
+        path: '/'
+      })
+      client.cache.reset().then(() => router.replace('/todos/list'))
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const handleSetActiveUser = (name: string) => {
