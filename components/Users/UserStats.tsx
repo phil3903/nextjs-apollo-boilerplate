@@ -1,12 +1,14 @@
-import React from 'react'
+import React, {useRef, useState} from 'react'
 import Router from 'next/router'
 import cookie from 'cookie'
 import { gql } from 'apollo-boost'
 import styled from '@emotion/styled'
 import { Circle, Text as Username } from './User'
 import { parseISO, format } from 'date-fns'
-import { FiUser } from 'react-icons/fi'
-import { useMutation } from '@apollo/react-hooks';
+import { FiUser, FiLogOut} from 'react-icons/fi'
+import { useMutation } from '@apollo/react-hooks'
+import ReactTooltip from 'react-tooltip'
+import { Tooltip } from '../Tooltip'
 
 export const REMOVE_USER = gql`
   mutation RemoveUser{
@@ -22,9 +24,21 @@ interface IUserStatsProps {
   todoCount: number
 }
 
-const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
+type TooltipRef = {tooltipRef: null} | null
 
+const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
+  const tooltip = useRef(null)
+  const [isOpen, setTooltipOpen] = useState(false)
   const [removeUser] = useMutation(REMOVE_USER)
+
+  const handleCancelTooltip = () =>{
+    const current : TooltipRef = tooltip.current
+    current!.tooltipRef = null
+    if(isOpen){
+      setTooltipOpen(false)
+      ReactTooltip.hide()
+    }
+  }
   const handleDeleteAccount = async () => {
     try {
       await removeUser()
@@ -49,12 +63,17 @@ const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
     <div>
       <Heading>
         <Wrapper>
-          <Circle>
-            <FiUser />
-          </Circle>
-          <Username>
-            {name}
-          </Username>
+          <User>
+            <Circle>
+              <FiUser />
+            </Circle>
+            <Username>
+              {name}
+            </Username>
+          </User>
+          <Logout onClick={ handleLogout }>
+             Logout <FiLogOut style={{marginBottom: -2, marginLeft: 2}}/>
+          </Logout>
         </Wrapper>
         
       </Heading>
@@ -66,12 +85,26 @@ const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
         <LeftText>Total Todos:</LeftText>
         <RightText>{todoCount}</RightText>
       </Row>
-      <Button onClick={ handleDeleteAccount }>
+      <Button
+        data-tip
+        data-event="click"
+      >
         Delete Account
       </Button>
-      <Button onClick={ handleLogout }>
-        Logout
-      </Button>
+      <ReactTooltip 
+        ref={tooltip}
+        clickable={true}
+        globalEventOff='click'
+        effect={'solid'}
+        afterShow={()=> setTooltipOpen(true)}
+        afterHide={()=> setTooltipOpen(false)}
+        getContent={ () => (
+          <Tooltip 
+            onCancel={ handleCancelTooltip } 
+            onConfirm={ handleDeleteAccount }
+          />
+        )} 
+      />
     </div>
   )
 }
@@ -89,9 +122,16 @@ const Heading = styled.div`
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: flex-start;
+  flex: 1;
+  justify-content: space-between;
   align-items: center;
 `
+
+const User = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  `
 
 const Row = styled.div`
   display: flex;
@@ -113,6 +153,7 @@ const RightText = styled.p`
   font-size: 14px;
   text-align: right;
   color: #fcfcfc;
+  white-space: nowrap;
 `
 
 const Button = styled.button`
@@ -130,8 +171,23 @@ const Button = styled.button`
   height: 38px;
   border-radius: 2px;
   margin-top: 14px;
+  transition: all 0.3s;
   &:hover{
     background: #28A37E;
+  }
+`
+
+const Logout = styled.button`
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: #fcfcfc;
+  opacity: 0.5;
+  border: none;
+  background: transparent;
+  transition: all 0.3s;
+  &:hover {
+    opacity: 1;
   }
 `
 

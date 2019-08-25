@@ -7,7 +7,8 @@ import express from 'express'
 import cookie from 'cookie'
 import { ApolloServer } from 'apollo-server-express'
 import { createConnection } from 'typeorm'
-import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions'
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
+//import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions'
 import nextapp from './nextapp'
 
 import schema from '../schemas'
@@ -19,13 +20,27 @@ import PagesRouter from './pages.routes'
 const app = express()
 app.use('/', PagesRouter)
 
-const typeOrmOptions: SqliteConnectionOptions = {
-  type: 'sqlite',
-  database: './database.sqlite',
+// Using my Postgres Docker container
+const typeOrmOptions: PostgresConnectionOptions = {
+  type: 'postgres',
+  database: 'todos',
   synchronize: true,
   logging: false,
   entities,
+  password: process.env.DATABASE_PASSWORD,
+  username: process.env.DATABASE_USERNAME,
+  host: process.env.DATABASE_HOST,
+  port: parseInt(process.env.DATABASE_PORT || '5432', 10)
 }
+
+// Uncomment to run locally with sqlite
+// const typeOrmOptions: SqliteConnectionOptions = {
+//   type: 'sqlite',
+//   database: './todoes.sqlite',
+//   synchronize: true,
+//   logging: false,
+//   entities,
+// }
 
 /* Server */
 async function main() {

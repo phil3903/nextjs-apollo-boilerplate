@@ -5,6 +5,7 @@ import { PageTransition } from 'next-page-transitions'
 import Navbar from '../components/Navbar'
 import withApolloClient from '../lib/with-apollo-client'
 import { ApolloProvider } from '@apollo/react-hooks'
+//import { Modal } from '../components/Modal'
 import '../styles/reset.scss'
 import '../styles/bootstrap-grid.scss'
 import '../styles/todos.scss'
@@ -97,13 +98,16 @@ class _App extends App<IProps> {
         </Head>
         <ApolloProvider client={apolloClient}>
           <div className="container-fluid fill">
+          
             <Navbar 
               title={'Todos'}
               stack={['Next.js', 'Apollo']}
             />
+             
           <PageTransition timeout={300} classNames="page-transition">
             <Component {...pageProps} key={router.route} />
           </PageTransition>
+        
         </div>
         </ApolloProvider>
       </Container>

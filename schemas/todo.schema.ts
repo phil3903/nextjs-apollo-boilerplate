@@ -10,6 +10,7 @@ export default gql`
     createTodo(dueDate: Date!, title: String!, description: String!): Todo
     updateTodo(id: ID!, isComplete: Boolean, dueDate: Date, title: String, description: String): Todo
     removeTodo(id: ID!): Todo
+    removeCompleteTodos: [ID]
   }
 
   type Todo {

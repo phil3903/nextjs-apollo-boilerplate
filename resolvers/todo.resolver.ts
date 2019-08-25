@@ -119,6 +119,25 @@ const removeTodo = async (
   }
 }
 
+const removeCompleteTodos = async(
+  _parent: any, _variables: any, { authorization }: IContext) => {
+  try {
+    const user = await authorizeUser(authorization)
+    const todoRepo = getRepository(Todo)
+
+    const todos = await todoRepo.find({
+      where: {user, isComplete: true}
+    })
+
+    const ids = todos.map(todo => todo.id)
+    await todoRepo.remove(todos)
+    return ids
+  }
+  catch(err) {
+    throw new ApolloError(err)
+  }
+}
+
 /* Resolver */
 
 const TodoResolver = {
@@ -130,6 +149,7 @@ const TodoResolver = {
     createTodo,
     updateTodo,
     removeTodo,
+    removeCompleteTodos
   },
 }
 

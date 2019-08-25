@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { FiCalendar, FiAlertCircle } from 'react-icons/fi'
+import { FiCalendar, FiAlertCircle, FiCheckSquare } from 'react-icons/fi'
 import { parseISO, format, getUnixTime } from 'date-fns';
 
 
@@ -26,7 +26,7 @@ const Todo = ({id, onClick, isComplete, title, description, dueDate}: ITodoProps
       isComplete={isComplete}
     >
       <Row>
-        <Title>
+        <Title title={title}>
           {title}
         </Title>
           
@@ -34,9 +34,11 @@ const Todo = ({id, onClick, isComplete, title, description, dueDate}: ITodoProps
             <DateString>
               {isComplete ? 'Complete' : format(date, FORMAT)}
             </DateString>
-            { isComplete ? null : today > getUnixTime(date)  
-              ? <FiAlertCircle color={'#a94442'} title={'Overdue'} style={{marginLeft: 8}}/>
-              : <FiCalendar color={'#fcfcfc'} title={'Due Date'} style={{marginLeft: 8}}/>
+            { isComplete 
+              ? <FiCheckSquare color={'#fcfcfc'} title={'Due Date'} style={{marginLeft: 8}} /> 
+              : today > getUnixTime(date)  
+                ? <FiAlertCircle color={'#a94442'} title={'Overdue'} style={{marginLeft: 8}}/>
+                : <FiCalendar color={'#fcfcfc'} title={'Due Date'} style={{marginLeft: 8}}/>
             }
         </Wrapper>
       </Row>
@@ -83,6 +85,9 @@ const Title = styled.p`
   font-weight: 600;
   font-size: 16px;
   line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `
 
 const DateString = styled.p`
@@ -91,7 +96,8 @@ const DateString = styled.p`
   font-weight: 500;
   font-size: 12px;
   line-height: 1;
-  margin: 3px 0 0 0;
+  margin: 3px 0 0 8px;
+  white-space: nowrap;
 `
 
 const Description = styled.p`

@@ -5,6 +5,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { FiMoreHorizontal } from 'react-icons/fi'
 import { Dropdown, DropdownOption } from '../Dropdown'
 import { ITodo } from '../../models/todo.model'
+import { GET_TODOS } from '../../pages/todos/list'
 import Todo from './Todo'
 
 export const UPDATE_TODO = gql`
@@ -16,6 +17,12 @@ export const UPDATE_TODO = gql`
   }
 `
 
+export const REMOVE_COMPLETE_TODOS = gql`
+  mutation RemoveCompleteTodos{
+    removeCompleteTodos
+  }
+`
+
 interface ITodoListProps {
   payload: ITodo[]
 }
@@ -23,10 +30,25 @@ interface ITodoListProps {
 const TodoList = ({payload}: ITodoListProps) => {
 
   const [updateIsComplete] = useMutation(UPDATE_TODO)
+  const [removeCompleteTodos] = useMutation(REMOVE_COMPLETE_TODOS)
   const [isVisible, setDropdownVisiblity] = useState(false) 
 
   const handleClearCompleted = () => {
     setDropdownVisiblity(false)
+    removeCompleteTodos({
+      variables: {isComplete: true},
+      update: (cache, {data: { removeCompleteTodos } }) => {
+        const prev = cache.readQuery({
+          query: GET_TODOS,
+          variables: {limit: 100}
+        })
+        console.log(prev)
+        console.log(removeCompleteTodos)
+        // cache.writeQuery({ query: GET_TODOS, data: {
+        //   ...prev
+        // } })
+      }   
+    })
   }
 
   const handleClick = (id: string, isComplete: boolean) => {
