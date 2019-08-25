@@ -28,6 +28,8 @@ export default class Todo extends BaseModel {
   @ManyToOne(() => User, user => user.todos, {
     eager: true, //loads automatically
     nullable: false,
+    cascade: true, 
+    onDelete: 'CASCADE' 
   })
   user: User
 }

@@ -21,7 +21,7 @@ app.use('/', PagesRouter)
 
 const typeOrmOptions: SqliteConnectionOptions = {
   type: 'sqlite',
-  database: './database.db',
+  database: './database.sqlite',
   synchronize: true,
   logging: false,
   entities,

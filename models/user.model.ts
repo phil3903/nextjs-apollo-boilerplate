@@ -25,15 +25,17 @@ export default class User extends BaseModel {
   @Column({ unique: true })
   name: string
 
-  @Column({select: false})
+  @Column({ select: false })
   password: string
 
-  @Column({default: 'default'})
+  @Column({ default: 'default' })
   photo: string
 
   @Column()
   lastLoginDate: Date
 
-  @OneToMany(() => Todo, todo => todo.user, {cascade: true})
+  @OneToMany(() => Todo, todo => todo.user, { 
+ 
+  })
   todos: Todo[]
 }

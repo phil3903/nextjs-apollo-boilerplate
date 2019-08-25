@@ -118,8 +118,8 @@ const removeUser = async (
     }
 
     if (user.id === id){
-      console.log(user)
-      return await userRepo.remove(user)
+      const deletedUser = await userRepo.remove(user)
+      return {...deletedUser, id: 'deleted'}
     } 
     else {
       throw new ApolloError("Nope, this ain't you!")
