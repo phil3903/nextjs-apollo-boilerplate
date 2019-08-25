@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { FiCalendar } from 'react-icons/fi'
-import { parseISO, format } from 'date-fns';
+import { FiCalendar, FiAlertCircle } from 'react-icons/fi'
+import { parseISO, format, getUnixTime } from 'date-fns';
 
 
 //const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -18,7 +18,8 @@ interface ITodoProps {
 }
 
 const Todo = ({id, onClick, isComplete, title, description, dueDate}: ITodoProps) => {
-  
+  const today = getUnixTime(new Date())
+  const date = parseISO(dueDate)
   return (
     <Card 
       onClick={()=> onClick(id, !isComplete)}
@@ -30,10 +31,13 @@ const Todo = ({id, onClick, isComplete, title, description, dueDate}: ITodoProps
         </Title>
           
           <Wrapper>
-            <Date>
-              {format(parseISO(dueDate), FORMAT)}
-            </Date>
-            <FiCalendar color={'#fcfcfc'}/>
+            <DateString>
+              {format(date, FORMAT)}
+            </DateString>
+            {today > getUnixTime(date)  
+              ? <FiAlertCircle color={'#a94442'} title={'Overdue'}/>
+              : <FiCalendar color={'#fcfcfc'} title={'Due Date'}/>
+            }
         </Wrapper>
       </Row>
       <Description>
@@ -78,7 +82,7 @@ const Title = styled.p`
   line-height: 1;
 `
 
-const Date = styled.p`
+const DateString = styled.p`
   text-align: right;
   font-family: 'Poppins Light';
   font-weight: 500;

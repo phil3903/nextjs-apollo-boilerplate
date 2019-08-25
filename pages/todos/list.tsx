@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { gql } from 'apollo-boost'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import Router from 'next/router'
 import { UserStats } from '../../components/Users'
 import { TodoList } from '../../components/Todos'
 import { Form, SubmitButton, StyledInput } from '../../components/FormElements'
 import { IUser } from '../../models/user.model'
-import { GET_TODOS } from '../../components/Todos/TodoList'
 
 
 const addTimezoneOffset = (dateString: string) => {
@@ -45,11 +44,29 @@ export const CREATE_TODO = gql`
   }
 `
 
+export const GET_TODOS = gql`
+  query GetTodos($limit: Int){
+    todos(limit: $limit){
+      totalCount
+      payload {
+        id
+        title
+        description
+        dueDate
+        isComplete
+      }
+    }
+  }
+`
+
 const Todos = ({ user }: { user: IUser }) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [createTodo] = useMutation(CREATE_TODO)
+  const {loading, data} = useQuery(GET_TODOS, {
+    variables: {limit: 100}
+  })
 
   const handleCreate = () => {
     createTodo({
@@ -82,6 +99,8 @@ const Todos = ({ user }: { user: IUser }) => {
     setDueDate(e.target.value)
   }
 
+  if (loading) return <pre>Loading...</pre>
+  
   return (
     <>
       <div className="row">
@@ -89,11 +108,14 @@ const Todos = ({ user }: { user: IUser }) => {
           <UserStats 
             name={user.name} 
             createdDate={String(user.createdDate)} 
+            todoCount={data.todos.totalCount}
           />
         </div>
         <div className="col-sm-1" />
         <div className="col-sm-3">
-          <TodoList />
+          <TodoList
+            payload={data.todos.payload}
+          />
         </div>
         <div className="col-sm-3">
           <Form 

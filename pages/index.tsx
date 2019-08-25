@@ -1,5 +1,6 @@
 import React,  { useState } from 'react'
 import { useRouter } from 'next/router'
+import styled from '@emotion/styled'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import { UserList, User } from '../components/Users'
@@ -109,15 +110,18 @@ const Index = (props: any) => {
         <div className="col-sm-1" />
         <div className="col-sm-3">
           <UserList>
-            {users.map((user: IClientUser) => (
-              <User 
-                key={user.id} 
-                name={user.name} 
-                photo={user.photo} 
-                isSelected={user.isSelected || false}
-                onClick={()=> handleSetActiveUser(user.name)}
-              />
-            ))}
+            {users.length 
+              ? users.map((user: IClientUser) => (
+                <User 
+                  key={user.id} 
+                  name={user.name} 
+                  photo={user.photo} 
+                  isSelected={user.isSelected || false}
+                  onClick={()=> handleSetActiveUser(user.name)}
+                />
+              ))
+              : <PlaceholderText>No users yet. Make an account!</PlaceholderText> 
+            }
           </UserList>
         </div>
         <div className="col-sm-3">
@@ -160,5 +164,10 @@ Index.getInitialProps = async (context: any) => {
   const { data } = await context.apolloClient.query({ query: INITIAL_USERS_QUERY })
   return data
 }
+
+const PlaceholderText = styled.p`
+  font-family: 'Poppins Light';
+  color: rgba(252, 252, 252, 0.5);
+`
 
 export default Index

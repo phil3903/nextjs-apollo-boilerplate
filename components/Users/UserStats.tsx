@@ -10,9 +10,10 @@ import { Dropdown, DropdownOption } from '../Dropdown'
 interface IUserStatsProps {
   name: string
   createdDate: string
+  todoCount: number
 }
 
-const UserStats = ({name, createdDate}: IUserStatsProps) => {
+const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
   const [isVisible, setDropdownVisiblity] = useState(false) 
 
   const handleEditUser = () => {
@@ -41,13 +42,15 @@ const UserStats = ({name, createdDate}: IUserStatsProps) => {
             {name}
           </Username>
         </Wrapper>
-        <IconButton onClick={() => setDropdownVisiblity(!isVisible)}>
+        <IconButton id="dropdown-button" onClick={() => setDropdownVisiblity(!isVisible)}>
           <FiMoreHorizontal 
             size={28}
             color={'#fcfcfc'}
           />
         </IconButton>
-        <Dropdown isVisible={isVisible}>
+        <Dropdown 
+          isVisible={ isVisible }
+        >
           <DropdownOption
             text={'Edit User'}
             onClick={ handleEditUser }
@@ -64,7 +67,7 @@ const UserStats = ({name, createdDate}: IUserStatsProps) => {
       </Row>
       <Row>
         <LeftText>Remaining Todos:</LeftText>
-        <RightText>X</RightText>
+        <RightText>{todoCount}</RightText>
       </Row>
     </div>
   )
