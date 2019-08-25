@@ -37,17 +37,10 @@ const TodoList = ({payload}: ITodoListProps) => {
     setDropdownVisiblity(false)
     removeCompleteTodos({
       variables: {isComplete: true},
-      update: (cache, {data: { removeCompleteTodos } }) => {
-        const prev = cache.readQuery({
+      refetchQueries: [{
           query: GET_TODOS,
           variables: {limit: 100}
-        })
-        console.log(prev)
-        console.log(removeCompleteTodos)
-        // cache.writeQuery({ query: GET_TODOS, data: {
-        //   ...prev
-        // } })
-      }   
+      }] 
     })
   }
 
