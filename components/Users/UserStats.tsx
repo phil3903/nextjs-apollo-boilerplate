@@ -1,11 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Router from 'next/router'
 import cookie from 'cookie'
+import { gql } from 'apollo-boost'
 import styled from '@emotion/styled'
 import { Circle, Text as Username } from './User'
 import { parseISO, format } from 'date-fns'
-import { FiUser, FiMoreHorizontal } from 'react-icons/fi'
-import { Dropdown, DropdownOption } from '../Dropdown'
+import { FiUser } from 'react-icons/fi'
+import { useMutation } from '@apollo/react-hooks';
+
+export const REMOVE_USER = gql`
+  mutation RemoveUser{
+    removeUser {
+      id
+    }
+  }
+`
 
 interface IUserStatsProps {
   name: string
@@ -14,10 +23,15 @@ interface IUserStatsProps {
 }
 
 const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
-  const [isVisible, setDropdownVisiblity] = useState(false) 
 
-  const handleEditUser = () => {
-    setDropdownVisiblity(false)
+  const [removeUser] = useMutation(REMOVE_USER)
+  const handleDeleteAccount = async () => {
+    try {
+      await removeUser()
+      Router.replace('/')
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const handleLogout = async () => {
@@ -42,43 +56,25 @@ const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
             {name}
           </Username>
         </Wrapper>
-        <IconButton id="dropdown-button" onClick={() => setDropdownVisiblity(!isVisible)}>
-          <FiMoreHorizontal 
-            size={28}
-            color={'#fcfcfc'}
-          />
-        </IconButton>
-        <Dropdown 
-          isVisible={ isVisible }
-        >
-          <DropdownOption
-            text={'Edit User'}
-            onClick={ handleEditUser }
-          />
-          <DropdownOption 
-            text={'Logout'} 
-            onClick={ handleLogout }
-          />
-        </Dropdown>
+        
       </Heading>
       <Row>
         <LeftText>User Since:</LeftText>
         <RightText>{format(parseISO(createdDate), 'MMM dd, yyyy')}</RightText>
       </Row>
       <Row>
-        <LeftText>Remaining Todos:</LeftText>
+        <LeftText>Total Todos:</LeftText>
         <RightText>{todoCount}</RightText>
       </Row>
+      <Button onClick={ handleDeleteAccount }>
+        Delete Account
+      </Button>
+      <Button onClick={ handleLogout }>
+        Logout
+      </Button>
     </div>
   )
 }
-
-const IconButton = styled.button`
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-`
 
 const Heading = styled.div`
   position: relative;
@@ -117,6 +113,26 @@ const RightText = styled.p`
   font-size: 14px;
   text-align: right;
   color: #fcfcfc;
+`
+
+const Button = styled.button`
+  text-align: center;
+  background: #1A936F;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  font-family: 'Poppins Light';
+  font-style: normal;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 24px;
+  color: #fcfcfc;
+  border: none;
+  height: 38px;
+  border-radius: 2px;
+  margin-top: 14px;
+  &:hover{
+    background: #28A37E;
+  }
 `
 
 export default UserStats

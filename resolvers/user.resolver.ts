@@ -106,16 +106,27 @@ const removeUser = async (
   { authorization }: IContext
 ) => {
   try {
-    const user = await authorizeUser(authorization)
     const {id} = await authorizeToken(authorization)
     const userRepo = getRepository(User)
+    const user = await userRepo.findOne({
+      where: {id},
+      relations: ['todos']
+    })
+
+    if(!user) {
+      throw new AuthenticationError('Unable to find user')
+    }
 
     if (user.id === id){
+      console.log(user)
       return await userRepo.remove(user)
-    }
+    } 
+    else {
+      throw new ApolloError("Nope, this ain't you!")
+    } 
   }
   catch(err) {
-    throw new ApolloError("Nope, this ain't you.")
+    throw new ApolloError(err)
   }
 }
 

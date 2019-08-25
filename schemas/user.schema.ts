@@ -9,7 +9,7 @@ export default gql`
   extend type Mutation {
     loginOrCreate(name: String!, password: String!,  photo: String): UserToken
     updateUser(name: String, photo: String): User
-    removeUser(id: ID!): User
+    removeUser: User
   }
 
   type User {

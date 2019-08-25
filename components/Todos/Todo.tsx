@@ -32,11 +32,11 @@ const Todo = ({id, onClick, isComplete, title, description, dueDate}: ITodoProps
           
           <Wrapper>
             <DateString>
-              {format(date, FORMAT)}
+              {isComplete ? 'Complete' : format(date, FORMAT)}
             </DateString>
-            {today > getUnixTime(date)  
-              ? <FiAlertCircle color={'#a94442'} title={'Overdue'}/>
-              : <FiCalendar color={'#fcfcfc'} title={'Due Date'}/>
+            { isComplete ? null : today > getUnixTime(date)  
+              ? <FiAlertCircle color={'#a94442'} title={'Overdue'} style={{marginLeft: 8}}/>
+              : <FiCalendar color={'#fcfcfc'} title={'Due Date'} style={{marginLeft: 8}}/>
             }
         </Wrapper>
       </Row>
@@ -59,6 +59,9 @@ const Card = styled.button<{ isComplete: boolean }>`
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   border: 4px solid transparent;
   opacity: ${(props) => props.isComplete ? 0.5 : 1};
+  &:hover{
+    background: #28A37E;
+  }
 `
 
 const Wrapper = styled.div`
@@ -88,7 +91,7 @@ const DateString = styled.p`
   font-weight: 500;
   font-size: 12px;
   line-height: 1;
-  margin: 3px 8px 0 0;
+  margin: 3px 0 0 0;
 `
 
 const Description = styled.p`
