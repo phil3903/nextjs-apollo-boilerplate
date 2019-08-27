@@ -1,0 +1,7 @@
+.git
+.gitignore
+.DS_Store
+.env.defaults
+Dockerfile
+TODO
+README.MD

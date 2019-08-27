@@ -1,7 +1,4 @@
-require('dotenv-extended').load({
-  errorOnMissing: true,
-  errorOnExtra: true,
-})
+require('dotenv-extended').load()
 import 'reflect-metadata'
 import express from 'express'
 import cookie from 'cookie'
