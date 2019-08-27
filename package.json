@@ -1,14 +1,14 @@
 {
   "name": "nextjs-apollo-boilerplate",
   "version": "1.0.0",
-  "description": "Next.js (React), Apollo (GraphQL), TypeScript, Express, TypeORM",
+  "description": "Next.js, Apollo, TypeScript, Express, TypeORM",
   "scripts": {
     "dev": "cross-env nodemon",
     "build": "cross-env next build && tsc --project tsconfig.server.json",
     "start": "cross-env node dist/server/index.js",
     "test": "cross-env echo \"Error: no test specified\" && exit 1",
     "docker-build": "docker build . -t nextjs-apollo-boilerplate",
-    "docker-test": "docker run -p 8080:8080 nextjs-apollo-boilerplate"
+    "docker-local": "docker run -p 8080:8080 nextjs-apollo-boilerplate"
   },
   "repository": {
     "type": "git",

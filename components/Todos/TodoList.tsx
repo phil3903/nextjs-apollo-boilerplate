@@ -60,9 +60,7 @@ const TodoList = ({payload}: ITodoListProps) => {
             color={'#fcfcfc'}
           />
         </IconButton>
-        <Dropdown 
-          isVisible={ isVisible }
-        >
+        <Dropdown isVisible={ isVisible }>
           <DropdownOption
             text={'Clear Completed'}
             onClick={ handleClearCompleted }
@@ -70,20 +68,20 @@ const TodoList = ({payload}: ITodoListProps) => {
         </Dropdown>
       </Heading>
       <Scrollable>
-      {payload.length 
-        ? payload.map(({id, title, description, isComplete, dueDate}: ITodo) => (
-          <Todo
-            key={id}
-            id={id}
-            onClick={handleClick}
-            isComplete={isComplete}
-            title={title}
-            description={description}
-            dueDate={String(dueDate)}
-          />
-          ))
-        : <PlaceholderText>You've Got Nothing To Do!</PlaceholderText> 
-        }
+        {payload.length 
+          ? payload.map(({id, title, description, isComplete, dueDate}: ITodo) => (
+            <Todo
+              key={id}
+              id={id}
+              onClick={handleClick}
+              isComplete={isComplete}
+              title={title}
+              description={description}
+              dueDate={String(dueDate)}
+            />
+            ))
+          : <PlaceholderText>You've Got Nothing To Do!</PlaceholderText> 
+          }
       </Scrollable>
     </List>
   )
