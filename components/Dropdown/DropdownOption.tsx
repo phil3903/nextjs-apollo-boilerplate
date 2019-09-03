@@ -18,19 +18,17 @@ const Option = styled.button`
 `
 
 const Li = styled.li`
- border-bottom: 1px solid #fcfcfc;
+  border-bottom: 1px solid #fcfcfc;
 `
 
 interface IDropdownOptions {
-  text: string,
+  text: string
   onClick: () => void
 }
-const DropdownOption = ({text, onClick}: IDropdownOptions) => {
-  return(
+const DropdownOption = ({ text, onClick }: IDropdownOptions) => {
+  return (
     <Li>
-      <Option onClick={ onClick }>
-        {text}
-      </Option>
+      <Option onClick={onClick}>{text}</Option>
     </Li>
   )
 }

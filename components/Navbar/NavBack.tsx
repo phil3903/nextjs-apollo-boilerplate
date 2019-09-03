@@ -1,4 +1,4 @@
-import React, {MouseEvent} from 'react'
+import React, { MouseEvent } from 'react'
 import { useRouter } from 'next/router'
 import styled from '@emotion/styled'
 
@@ -10,11 +10,7 @@ const NavBack = () => {
     router.back()
   }
 
-  return (
-    <Anchor onClick={handleClick}>
-      X
-    </Anchor>
-  )
+  return <Anchor onClick={handleClick}>X</Anchor>
 }
 
 const Anchor = styled.a`

@@ -1,4 +1,2 @@
 import Instructions from './Instructions'
-export {
-  Instructions
-}
+export { Instructions }

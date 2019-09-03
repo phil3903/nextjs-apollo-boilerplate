@@ -34,6 +34,6 @@ export default class User extends BaseModel {
   @Column()
   lastLoginDate: Date
 
-  @OneToMany(() => Todo, todo => todo.user)
+  @OneToMany(() => Todo, (todo) => todo.user)
   todos: Todo[]
 }

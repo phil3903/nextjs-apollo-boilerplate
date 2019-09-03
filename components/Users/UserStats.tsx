@@ -1,17 +1,17 @@
-import React, {useRef, useState} from 'react'
+import React, { useRef, useState } from 'react'
 import Router from 'next/router'
 import cookie from 'cookie'
 import { gql } from 'apollo-boost'
 import styled from '@emotion/styled'
 import { Circle, Text as Username } from './User'
 import { parseISO, format } from 'date-fns'
-import { FiUser, FiLogOut} from 'react-icons/fi'
+import { FiUser, FiLogOut } from 'react-icons/fi'
 import { useMutation } from '@apollo/react-hooks'
 import ReactTooltip from 'react-tooltip'
 import { Tooltip } from '../Tooltip'
 
 export const REMOVE_USER = gql`
-  mutation RemoveUser{
+  mutation RemoveUser {
     removeUser {
       id
     }
@@ -24,17 +24,17 @@ interface IUserStatsProps {
   todoCount: number
 }
 
-type TooltipRef = {tooltipRef: null} | null
+type TooltipRef = { tooltipRef: null } | null
 
-const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
+const UserStats = ({ name, createdDate, todoCount = 0 }: IUserStatsProps) => {
   const tooltip = useRef(null)
   const [isOpen, setTooltipOpen] = useState(false)
   const [removeUser] = useMutation(REMOVE_USER)
 
-  const handleCancelTooltip = () =>{
-    const current : TooltipRef = tooltip.current
+  const handleCancelTooltip = () => {
+    const current: TooltipRef = tooltip.current
     current!.tooltipRef = null
-    if(isOpen){
+    if (isOpen) {
       setTooltipOpen(false)
       ReactTooltip.hide()
     }
@@ -52,14 +52,14 @@ const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
     try {
       document.cookie = await cookie.serialize('authorization', 'null', {
         maxAge: -1,
-        path: '/'
+        path: '/',
       })
       Router.replace('/')
     } catch (err) {
       console.log(err)
     }
   }
-  return(
+  return (
     <div>
       <Heading>
         <Wrapper>
@@ -67,15 +67,12 @@ const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
             <Circle>
               <FiUser />
             </Circle>
-            <Username>
-              {name}
-            </Username>
+            <Username>{name}</Username>
           </User>
-          <Logout onClick={ handleLogout }>
-             Logout <FiLogOut style={{marginBottom: -2, marginLeft: 2}}/>
+          <Logout onClick={handleLogout}>
+            Logout <FiLogOut style={{ marginBottom: -2, marginLeft: 2 }} />
           </Logout>
         </Wrapper>
-        
       </Heading>
       <Row>
         <LeftText>User Since:</LeftText>
@@ -85,25 +82,22 @@ const UserStats = ({name, createdDate, todoCount = 0}: IUserStatsProps) => {
         <LeftText>Total Todos:</LeftText>
         <RightText>{todoCount}</RightText>
       </Row>
-      <Button
-        data-tip
-        data-event="click"
-      >
+      <Button data-tip data-event="click">
         Delete Account
       </Button>
-      <ReactTooltip 
+      <ReactTooltip
         ref={tooltip}
         clickable={true}
-        globalEventOff='click'
+        globalEventOff="click"
         effect={'solid'}
-        afterShow={()=> setTooltipOpen(true)}
-        afterHide={()=> setTooltipOpen(false)}
-        getContent={ () => (
-          <Tooltip 
-            onCancel={ handleCancelTooltip } 
-            onConfirm={ handleDeleteAccount }
+        afterShow={() => setTooltipOpen(true)}
+        afterHide={() => setTooltipOpen(false)}
+        getContent={() => (
+          <Tooltip
+            onCancel={handleCancelTooltip}
+            onConfirm={handleDeleteAccount}
           />
-        )} 
+        )}
       />
     </div>
   )
@@ -114,7 +108,7 @@ const Heading = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #FCFCFC;
+  border-bottom: 1px solid #fcfcfc;
   align-items: center;
   padding-bottom: 16px;
   margin-bottom: 16px;
@@ -131,7 +125,7 @@ const User = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  `
+`
 
 const Row = styled.div`
   display: flex;
@@ -158,7 +152,7 @@ const RightText = styled.p`
 
 const Button = styled.button`
   text-align: center;
-  background: #1A936F;
+  background: #1a936f;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
   width: 100%;
   font-family: 'Poppins Light';
@@ -172,8 +166,8 @@ const Button = styled.button`
   border-radius: 2px;
   margin-top: 14px;
   transition: all 0.3s;
-  &:hover{
-    background: #28A37E;
+  &:hover {
+    background: #28a37e;
   }
 `
 

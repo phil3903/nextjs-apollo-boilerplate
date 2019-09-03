@@ -3,6 +3,6 @@ export interface IContext {
 }
 
 export interface IBaseQuery {
-  limit: number,
+  limit: number
   page: number
 }

@@ -4,16 +4,18 @@ import Todo, { ITodo } from '../models/todo.model'
 import { IContext, IBaseQuery } from '../types'
 import { authorizeUser } from '../lib/auth'
 
-
 /* Queries */
 
-const todo = async (_parent: any, { id }: { id: string }, { authorization }: IContext,) => {
+const todo = async (
+  _parent: any,
+  { id }: { id: string },
+  { authorization }: IContext,
+) => {
   try {
-  const user = await authorizeUser(authorization)
-  const todoRepo = getRepository(Todo)
-  return await todoRepo.findOne({where: {id, user}})
-  }
-  catch(err){
+    const user = await authorizeUser(authorization)
+    const todoRepo = getRepository(Todo)
+    return await todoRepo.findOne({ where: { id, user } })
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
@@ -27,11 +29,11 @@ const todos = async (
     const user = await authorizeUser(authorization)
     const todoRepo = getRepository(Todo)
     const [payload, totalCount] = await todoRepo.findAndCount({
-      where: {user},
+      where: { user },
       order: {
-        dueDate: "DESC", 
-        isComplete: "ASC"
-      }
+        dueDate: 'DESC',
+        isComplete: 'ASC',
+      },
     })
 
     const pageCount = Math.ceil(totalCount / limit)
@@ -44,8 +46,7 @@ const todos = async (
       page,
       pageCount,
     }
-  } 
-  catch (err) {
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
@@ -57,7 +58,7 @@ const createTodo = async (
   { dueDate, title, description }: ITodo,
   { authorization }: IContext,
 ) => {
-  try{
+  try {
     const user = await authorizeUser(authorization)
     const todoRepo = getRepository(Todo)
     const todo = await todoRepo.create()
@@ -66,8 +67,7 @@ const createTodo = async (
     todo.description = description
     todo.user = user
     return await todoRepo.save(todo)
-  }
-  catch (err) {
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
@@ -80,7 +80,7 @@ const updateTodo = async (
   try {
     await authorizeUser(authorization)
     const todoRepo = getRepository(Todo)
-    const todo = await todoRepo.findOne({where: {id}})
+    const todo = await todoRepo.findOne({ where: { id } })
 
     if (!todo) {
       throw new ApolloError('Todo does not exist')
@@ -92,48 +92,48 @@ const updateTodo = async (
     todo.title = title || todo.title
 
     return await todoRepo.save(todo)
-  }
-  catch (err) {
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
 
 const removeTodo = async (
-  _parent: any, 
+  _parent: any,
   { id }: { id: string },
   { authorization }: IContext,
 ) => {
   try {
     const user = await authorizeUser(authorization)
     const todoRepo = getRepository(Todo)
-    const todo = await todoRepo.findOne({where: {id, user}})
+    const todo = await todoRepo.findOne({ where: { id, user } })
 
     if (!todo) {
       throw new ApolloError('Todo does not exist')
     }
 
     return await todoRepo.remove(todo)
-  }
-  catch (err) {
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
 
-const removeCompleteTodos = async(
-  _parent: any, _variables: any, { authorization }: IContext) => {
+const removeCompleteTodos = async (
+  _parent: any,
+  _variables: any,
+  { authorization }: IContext,
+) => {
   try {
     const user = await authorizeUser(authorization)
     const todoRepo = getRepository(Todo)
 
     const todos = await todoRepo.find({
-      where: {user, isComplete: true}
+      where: { user, isComplete: true },
     })
 
-    const ids = todos.map(todo => todo.id)
+    const ids = todos.map((todo) => todo.id)
     await todoRepo.remove(todos)
     return ids
-  }
-  catch(err) {
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
@@ -149,7 +149,7 @@ const TodoResolver = {
     createTodo,
     updateTodo,
     removeTodo,
-    removeCompleteTodos
+    removeCompleteTodos,
   },
 }
 

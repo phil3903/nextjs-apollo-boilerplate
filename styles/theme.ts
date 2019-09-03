@@ -1,6 +1,2 @@
-interface ITheme {
-  
-}
-export const Theme: ITheme = {
-
-}
+interface ITheme {}
+export const Theme: ITheme = {}

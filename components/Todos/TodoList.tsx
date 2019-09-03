@@ -9,8 +9,8 @@ import { GET_TODOS } from '../../pages/todos/list'
 import Todo from './Todo'
 
 export const UPDATE_TODO = gql`
-  mutation UpdateTodo($id: ID!, $isComplete: Boolean){
-    updateTodo(id: $id, isComplete: $isComplete){
+  mutation UpdateTodo($id: ID!, $isComplete: Boolean) {
+    updateTodo(id: $id, isComplete: $isComplete) {
       id
       isComplete
     }
@@ -18,7 +18,7 @@ export const UPDATE_TODO = gql`
 `
 
 export const REMOVE_COMPLETE_TODOS = gql`
-  mutation RemoveCompleteTodos{
+  mutation RemoveCompleteTodos {
     removeCompleteTodos
   }
 `
@@ -27,61 +27,63 @@ interface ITodoListProps {
   payload: ITodo[]
 }
 
-const TodoList = ({payload}: ITodoListProps) => {
-
+const TodoList = ({ payload }: ITodoListProps) => {
   const [updateIsComplete] = useMutation(UPDATE_TODO)
   const [removeCompleteTodos] = useMutation(REMOVE_COMPLETE_TODOS)
-  const [isVisible, setDropdownVisiblity] = useState(false) 
+  const [isVisible, setDropdownVisiblity] = useState(false)
 
   const handleClearCompleted = () => {
     setDropdownVisiblity(false)
     removeCompleteTodos({
-      variables: {isComplete: true},
-      refetchQueries: [{
+      variables: { isComplete: true },
+      refetchQueries: [
+        {
           query: GET_TODOS,
-          variables: {limit: 100}
-      }] 
+          variables: { limit: 100 },
+        },
+      ],
     })
   }
 
   const handleClick = (id: string, isComplete: boolean) => {
-    updateIsComplete({variables:{id, isComplete}})
+    updateIsComplete({ variables: { id, isComplete } })
   }
 
   return (
     <List>
       <Heading>
-        <Title>
-          Todos
-        </Title>
-        <IconButton id="dropdown-button" onClick={() => setDropdownVisiblity(!isVisible)}>
-          <FiMoreHorizontal 
-            size={28}
-            color={'#fcfcfc'}
-          />
+        <Title>Todos</Title>
+        <IconButton
+          id="dropdown-button"
+          onClick={() => setDropdownVisiblity(!isVisible)}
+        >
+          <FiMoreHorizontal size={28} color={'#fcfcfc'} />
         </IconButton>
-        <Dropdown isVisible={ isVisible }>
+        <Dropdown isVisible={isVisible}>
           <DropdownOption
             text={'Clear Completed'}
-            onClick={ handleClearCompleted }
+            onClick={handleClearCompleted}
           />
         </Dropdown>
       </Heading>
       <Scrollable>
-        {payload.length 
-          ? payload.map(({id, title, description, isComplete, dueDate}: ITodo) => (
-            <Todo
-              key={id}
-              id={id}
-              onClick={handleClick}
-              isComplete={isComplete}
-              title={title}
-              description={description}
-              dueDate={String(dueDate)}
-            />
-            ))
-          : <PlaceholderText>You've Got Nothing To Do!</PlaceholderText> 
-          }
+        {payload.length ? (
+          payload.map(
+            ({ id, title, description, isComplete, dueDate }: ITodo) => (
+              <Todo
+                key={id}
+                id={id}
+                onClick={handleClick}
+                isComplete={isComplete}
+                title={title}
+                description={description}
+                dueDate={String(dueDate)}
+              />
+            ),
+          )
+        ) : (
+          <PlaceholderText>You've Got Nothing To Do!</PlaceholderText>
+        )}
       </Scrollable>
     </List>
   )

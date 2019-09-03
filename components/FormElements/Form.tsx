@@ -21,7 +21,7 @@ const Form = ({ title, children, onSubmit }: IFormProps) => {
       .filter((c: any) => c.props.formData)
       .reduce((obj: object, c: any) => {
         const data = new FormData(e.target as HTMLFormElement)
-        return {...obj, [c.props.name]:data.get(c.props.name)}
+        return { ...obj, [c.props.name]: data.get(c.props.name) }
       }, {})
 
     onSubmit(data)

@@ -6,7 +6,7 @@ const Dialog = styled.div`
   align-items: center;
   justify-content: center;
   margin: auto;
-  background: linear-gradient(57.99deg, #114B5F 0%, #1A936F 100%);
+  background: linear-gradient(57.99deg, #114b5f 0%, #1a936f 100%);
   color: #fcfcfc;
   margin-top: 20%;
   width: 90%;
@@ -21,12 +21,12 @@ const Overlay = styled.div`
   bottom: 0;
   right: 0;
   left: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
 `
 
 const Button = styled.button`
   text-align: center;
-  background: #114B5F;
+  background: #114b5f;
   width: 100%;
   font-family: 'Poppins Light';
   font-style: normal;
@@ -37,7 +37,7 @@ const Button = styled.button`
   border: none;
   height: 40px;
   border-radius: 2px;
-  &:hover{
+  &:hover {
     background: #205060;
   }
 `

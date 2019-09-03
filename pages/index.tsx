@@ -1,10 +1,15 @@
-import React,  { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import styled from '@emotion/styled'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import { UserList, User } from '../components/Users'
-import { Form, Input, SubmitButton, StyledInput } from '../components/FormElements'
+import {
+  Form,
+  Input,
+  SubmitButton,
+  StyledInput,
+} from '../components/FormElements'
 import { Instructions } from '../components/Instructions'
 import { IFormData } from '../components/FormElements/Form'
 import { IUser } from '../models/user.model'
@@ -63,12 +68,12 @@ const Index = (props: any) => {
   const handleLogin = async (variables: IFormData[]) => {
     try {
       const res = await loginOrCreate({
-        variables: {...variables, name: username},
+        variables: { ...variables, name: username },
       })
-      const {token, expiresIn} = res.data.loginOrCreate
+      const { token, expiresIn } = res.data.loginOrCreate
       document.cookie = await cookie.serialize('authorization', token, {
         maxAge: expiresIn,
-        path: '/'
+        path: '/',
       })
       client.cache.reset().then(() => router.replace('/todos/list'))
     } catch (err) {
@@ -79,10 +84,12 @@ const Index = (props: any) => {
   const handleSetActiveUser = (name: string) => {
     setSelectedUser({
       variables: { name },
-      refetchQueries: [{
-        query: GET_USERS,
-      }],
-    }).then(()=>{
+      refetchQueries: [
+        {
+          query: GET_USERS,
+        },
+      ],
+    }).then(() => {
       setUsername(name)
     })
   }
@@ -90,16 +97,17 @@ const Index = (props: any) => {
   const handleUsernameUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value)
     setSelectedUser({
-      variables: { name },
-      refetchQueries: [{
-        query: GET_USERS,
-      }],
+      variables: { name: username },
+      refetchQueries: [
+        {
+          query: GET_USERS,
+        },
+      ],
     })
   }
 
-  const users = !loading && data && data.users 
-    ? data.users.payload 
-    : props.users.payload
+  const users =
+    !loading && data && data.users ? data.users.payload : props.users.payload
 
   return (
     <>
@@ -110,28 +118,29 @@ const Index = (props: any) => {
         <div className="col-sm-1" />
         <div className="col-sm-3">
           <UserList>
-            {users.length 
-              ? users.map((user: IClientUser) => (
-                <User 
-                  key={user.id} 
-                  name={user.name} 
-                  photo={user.photo} 
+            {users.length ? (
+              users.map((user: IClientUser) => (
+                <User
+                  key={user.id}
+                  name={user.name}
+                  photo={user.photo}
                   isSelected={user.isSelected || false}
-                  onClick={()=> handleSetActiveUser(user.name)}
+                  onClick={() => handleSetActiveUser(user.name)}
                 />
               ))
-              : <PlaceholderText>No users yet. Make an account!</PlaceholderText> 
-            }
+            ) : (
+              <PlaceholderText>No users yet. Make an account!</PlaceholderText>
+            )}
           </UserList>
         </div>
         <div className="col-sm-3">
           <Form title={'Login'} onSubmit={handleLogin}>
-            <StyledInput 
+            <StyledInput
               type="text"
-              name="name" 
+              name="name"
               placeholder="Name"
-              value={ username }
-              onChange={ handleUsernameUpdate }
+              value={username}
+              onChange={handleUsernameUpdate}
             />
             <Input name="password" placeholder={'Password'} type="password" />
             <SubmitButton text={'Login'} />
@@ -145,23 +154,25 @@ const Index = (props: any) => {
 
 Index.getInitialProps = async (context: any) => {
   const INITIAL_USERS_QUERY = gql`
-  query GetUsers($page: Int, $limit: Int) {
-    users(limit: $limit, page: $page) {
-      totalCount
-      count
-      page
-      pageCount
-      payload {
-        id
-        createdDate
-        updatedDate
-        name
-        photo
+    query GetUsers($page: Int, $limit: Int) {
+      users(limit: $limit, page: $page) {
+        totalCount
+        count
+        page
+        pageCount
+        payload {
+          id
+          createdDate
+          updatedDate
+          name
+          photo
+        }
       }
     }
-  }
-`
-  const { data } = await context.apolloClient.query({ query: INITIAL_USERS_QUERY })
+  `
+  const { data } = await context.apolloClient.query({
+    query: INITIAL_USERS_QUERY,
+  })
   return data
 }
 

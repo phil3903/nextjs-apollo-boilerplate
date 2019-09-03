@@ -5,19 +5,15 @@ import styled from '@emotion/styled'
 /* Navbar */
 
 interface INavbarProps {
-  title: string,
+  title: string
   stack: string[]
 }
 
 export const Navbar = (props: INavbarProps) => {
-  return(
+  return (
     <Bar className="row">
-      <Title>
-        {props.title}
-      </Title>
-      <StackText>
-        {props.stack.join('  |  ')}
-      </StackText>
+      <Title>{props.title}</Title>
+      <StackText>{props.stack.join('  |  ')}</StackText>
     </Bar>
   )
 }
@@ -32,7 +28,7 @@ const Bar = styled.div`
 
 const Title = styled.span`
   font-family: Poppins SemiBold;
-  color: #F3E9D2;
+  color: #f3e9d2;
   font-size: 24px;
   font-weight: 600;
   margin: 0 8px 0 8px;
@@ -40,7 +36,7 @@ const Title = styled.span`
 
 const StackText = styled.span`
   font-family: Poppins Medium;
-  color: #F3E9D2;
+  color: #f3e9d2;
   font-size: 16px;
   font-weight: 500;
 `

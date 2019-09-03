@@ -12,7 +12,7 @@ const postgresOptions: PostgresConnectionOptions = {
   password: process.env.DATABASE_PASSWORD,
   username: process.env.DATABASE_USERNAME,
   host: process.env.DATABASE_HOST,
-  port: parseInt(process.env.DATABASE_PORT || '5432', 10)
+  port: parseInt(process.env.DATABASE_PORT || '5432', 10),
 }
 
 // Uncomment to run locally with sqlite
@@ -24,7 +24,7 @@ const sqliteOptions: SqliteConnectionOptions = {
   entities,
 }
 
-const typeOrmOptions = process.env.DATABASE_DRIVER === 'postgres' 
-  ? postgresOptions : sqliteOptions
-  
+const typeOrmOptions =
+  process.env.DATABASE_DRIVER === 'postgres' ? postgresOptions : sqliteOptions
+
 export default typeOrmOptions

@@ -1,34 +1,34 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
 
 interface InputProps {
-  placeholder: string,
+  placeholder: string
   type?: string
-  name: string,
+  name: string
   formData: boolean
 }
 
-const Input = ({placeholder, name, type}: InputProps) => {
+const Input = ({ placeholder, name, type }: InputProps) => {
   const [text, setText] = useState('')
-  
+
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value)
   }
-  
+
   return (
-    <StyledInput 
+    <StyledInput
       placeholder={placeholder}
       name={name}
       type={type}
       value={text}
-      onChange={ handleOnChange }
+      onChange={handleOnChange}
     />
   )
 }
 
 Input.defaultProps = {
   formData: true,
-  type: 'text'
+  type: 'text',
 }
 
 export const StyledInput = styled.input`
@@ -47,25 +47,21 @@ export const StyledInput = styled.input`
     color: rgba(252, 252, 252, 0.5);
   }
 
-  ::-webkit-datetime-edit {  
-
+  ::-webkit-datetime-edit {
   }
   ::-webkit-datetime-edit-fields-wrapper {
-
-   }
+  }
   ::-webkit-datetime-edit-text,
   ::-webkit-datetime-edit-month-field,
   ::-webkit-datetime-edit-day-field,
-  ::-webkit-datetime-edit-year-field { 
-    color: ${props => props.value 
-      ? 'rgba(252, 252, 252, 1)'
-      : 'rgba(252, 252, 252, 0.5)'
-    };
+  ::-webkit-datetime-edit-year-field {
+    color: ${(props) =>
+      props.value ? 'rgba(252, 252, 252, 1)' : 'rgba(252, 252, 252, 0.5)'};
   }
-  ::-webkit-inner-spin-button { 
-    display: none; 
+  ::-webkit-inner-spin-button {
+    display: none;
   }
-  ::-webkit-calendar-picker-indicator { 
+  ::-webkit-calendar-picker-indicator {
     padding-right: 16px;
     color: rgba(252, 252, 252, 0.7);
     :hover {
@@ -73,7 +69,6 @@ export const StyledInput = styled.input`
       background: transparent;
       cursor: pointer;
     }
-    
   }
 `
 

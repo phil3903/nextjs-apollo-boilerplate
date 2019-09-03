@@ -25,11 +25,11 @@ export default class Todo extends BaseModel {
   @Column()
   description: string
 
-  @ManyToOne(() => User, user => user.todos, {
+  @ManyToOne(() => User, (user) => user.todos, {
     eager: true, //loads automatically
     nullable: false,
-    cascade: true, 
-    onDelete: 'CASCADE' 
+    cascade: true,
+    onDelete: 'CASCADE',
   })
   user: User
 }

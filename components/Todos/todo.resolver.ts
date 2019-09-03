@@ -1,4 +1,4 @@
-import {gql, InMemoryCache} from 'apollo-boost'
+import { gql, InMemoryCache } from 'apollo-boost'
 import { ITodo } from '../../models/todo.model'
 
 const GET_ACTIVE_TODOS = gql`
@@ -12,18 +12,19 @@ interface ActiveTodosResult {
 }
 
 const todoResolver = {
-  Mutation:{
+  Mutation: {
     toggleActiveTodos: (
-      _:any, 
-      {id}: {id: string}, 
-      {cache}: {cache: InMemoryCache}
-    ) =>{
-    
-      const activeTodos = cache.readQuery<ActiveTodosResult>({query: GET_ACTIVE_TODOS})!.activeTodos
+      _: any,
+      { id }: { id: string },
+      { cache }: { cache: InMemoryCache },
+    ) => {
+      const activeTodos = cache.readQuery<ActiveTodosResult>({
+        query: GET_ACTIVE_TODOS,
+      })!.activeTodos
       const index = activeTodos.indexOf(id)
 
       let next = []
-      if(index < 0){
+      if (index < 0) {
         next = [...activeTodos, id]
       } else {
         next = [...activeTodos.slice(0, index), ...activeTodos.slice(index + 1)]
@@ -31,17 +32,23 @@ const todoResolver = {
 
       cache.writeData({
         data: {
-          activeTodos: next
-        }
+          activeTodos: next,
+        },
       })
       return null
-    }
+    },
   },
   Todo: {
-    isActive: (todo: ITodo, _variables:any,  {cache}:{cache: InMemoryCache}) =>{
-      const activeTodos = cache.readQuery<ActiveTodosResult>({query: GET_ACTIVE_TODOS})!.activeTodos
+    isActive: (
+      todo: ITodo,
+      _variables: any,
+      { cache }: { cache: InMemoryCache },
+    ) => {
+      const activeTodos = cache.readQuery<ActiveTodosResult>({
+        query: GET_ACTIVE_TODOS,
+      })!.activeTodos
       return activeTodos.includes(todo.id)
-    }
+    },
   },
 }
 

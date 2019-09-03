@@ -1,2 +1,2 @@
 import Modal from './Modal'
-export {Modal}
+export { Modal }

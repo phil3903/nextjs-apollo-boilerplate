@@ -7,10 +7,14 @@ import { createToken, authorizeToken, authorizeUser } from '../lib/auth'
 
 /* Queries */
 
-const user = async (_parent: any, _variables: any, {authorization}: IContext) => {
+const user = async (
+  _parent: any,
+  _variables: any,
+  { authorization }: IContext,
+) => {
   try {
     return await authorizeUser(authorization)
-  } catch(err){
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
@@ -33,28 +37,31 @@ const users = async (_parent: any, { limit = 10, page = 1 }: IBaseQuery) => {
       page,
       pageCount,
     }
-  }
-  catch (err) {
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
 
 /* Mutations */
 
-const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => {
-  try{
-    if(!password) {
+const loginOrCreate = async (
+  _parent: any,
+  { name, password, photo }: IUser,
+) => {
+  try {
+    if (!password) {
       throw new AuthenticationError('No Password Provided')
     }
 
     const userRepo = getRepository(User)
-    const user = await userRepo.createQueryBuilder('user')
-      .where('user.name = :name', {name})
+    const user = await userRepo
+      .createQueryBuilder('user')
+      .where('user.name = :name', { name })
       .addSelect('user.password')
       .getOne()
 
     // If we find a user then validate
-    if(user){
+    if (user) {
       const isValid = await bcrypt.compare(password, user.password)
       if (!isValid) {
         throw new AuthenticationError('Wrong Password')
@@ -80,7 +87,6 @@ const loginOrCreate = async (_parent: any, { name, password, photo }: IUser) => 
   }
 }
 
-
 const updateUser = async (
   _parent: any,
   { name, photo }: IUser,
@@ -94,38 +100,35 @@ const updateUser = async (
     user.photo = photo || user.photo
 
     return await userRepo.save(user)
-  } 
-  catch(err){
+  } catch (err) {
     throw new ApolloError(err)
   }
 }
 
 const removeUser = async (
-  _parent: any, 
-  _variables: any, 
-  { authorization }: IContext
+  _parent: any,
+  _variables: any,
+  { authorization }: IContext,
 ) => {
   try {
-    const {id} = await authorizeToken(authorization)
+    const { id } = await authorizeToken(authorization)
     const userRepo = getRepository(User)
     const user = await userRepo.findOne({
-      where: {id},
-      relations: ['todos']
+      where: { id },
+      relations: ['todos'],
     })
 
-    if(!user) {
+    if (!user) {
       throw new AuthenticationError('Unable to find user')
     }
 
-    if (user.id === id){
+    if (user.id === id) {
       const deletedUser = await userRepo.remove(user)
-      return {...deletedUser, id: 'deleted'}
-    } 
-    else {
+      return { ...deletedUser, id: 'deleted' }
+    } else {
       throw new ApolloError("Nope, this ain't you!")
-    } 
-  }
-  catch(err) {
+    }
+  } catch (err) {
     throw new ApolloError(err)
   }
 }

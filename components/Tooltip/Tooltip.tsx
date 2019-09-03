@@ -1,28 +1,22 @@
 import styled from '@emotion/styled'
 
 interface ITooltipProps {
-  onConfirm: ()=> void
-  onCancel: ()=> void
+  onConfirm: () => void
+  onCancel: () => void
 }
-const Tooltip = ({onConfirm, onCancel}: ITooltipProps) => {
+const Tooltip = ({ onConfirm, onCancel }: ITooltipProps) => {
   return (
-      <Container>
-        <Title>
-          Delete Account
-        </Title>
-        <Message>
-          Are you sure you want to delete your account? This cannot be undone, but feel free to make another!
-        </Message>
-        <Wrapper>
-          <CancelButton onClick={onCancel}>
-            Cancel
-          </CancelButton>
-          <ConfirmButton onClick={onConfirm}>
-            Confirm
-          </ConfirmButton>
-        </Wrapper>
-      </Container>
-
+    <Container>
+      <Title>Delete Account</Title>
+      <Message>
+        Are you sure you want to delete your account? This cannot be undone, but
+        feel free to make another!
+      </Message>
+      <Wrapper>
+        <CancelButton onClick={onCancel}>Cancel</CancelButton>
+        <ConfirmButton onClick={onConfirm}>Confirm</ConfirmButton>
+      </Wrapper>
+    </Container>
   )
 }
 
@@ -69,14 +63,14 @@ const ConfirmButton = styled.button`
   flex: 1;
   margin: 8px 8px 16px 8px;
   margin: 8px;
-  background: #C02300;
+  background: #c02300;
   color: #fcfcfc;
   border: none;
   border-radius: 2px;
   height: 30px;
   transition: all 0.3s;
   &:hover {
-    background: #C92400;
+    background: #c92400;
   }
 `
 
