@@ -1,3 +1,5 @@
+/* eslint-disable import/first */
+require('dotenv-extended').load()
 import 'reflect-metadata'
 import express from 'express'
 import cookie from 'cookie'
@@ -9,7 +11,6 @@ import nextapp from './nextapp'
 import schema from '../schemas'
 import resolvers from '../resolvers'
 import PagesRouter from './pages.routes'
-require('dotenv-extended').load()
 
 /* Express */
 const app = express()
