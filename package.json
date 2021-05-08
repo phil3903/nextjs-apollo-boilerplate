@@ -68,7 +68,7 @@
     "react-window-infinite-loader": "^1.0.3",
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^4.1.0",
-    "typeorm": "^0.2.18"
+    "typeorm": "^0.2.25"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.1.0",
