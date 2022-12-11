@@ -52,7 +52,7 @@
     "date-fns": "^2.0.0",
     "date-fns-timezone": "^0.1.4",
     "date-fns-tz": "^1.0.7",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphql": "^14.4.2",
     "isomorphic-unfetch": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
